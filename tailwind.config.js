@@ -1,10 +1,17 @@
-/** @type {import('tailwindcss').Config} */
+// tailwind.config.js
+
 module.exports = {
   content: [
-    "./src/**/*.{js,ts,jsx,tsx}", // Ensure it points to the src directory
+    "./src/**/*.{js,ts,jsx,tsx}", // Adjust this path based on your project structure
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        lightblue: {
+          300: "#bfdbfe", // Custom light blue color
+        },
+      },
+    },
   },
   plugins: [],
 };
