@@ -7,57 +7,48 @@ import Progress from "./Progress";
 
 // Define the structure of a question
 type Question = {
-  pytanie: string;
-  odpowiedz: string;
+  pytanie: string; // The question text
+  odpowiedz: string; // The correct answer
+  guessed: number; // 0 if not guessed, 1 if guessed
+  errors: number; // Count of incorrect answers
+  active: number; // 1 if the question is currently active, 0 otherwise
 };
 
 interface QuestionManagerProps {
-  questions: Question[];
-  setActiveQuestions: React.Dispatch<React.SetStateAction<Question[]>>;
-  activeQuestions: Question[];
-  answeredQuestions: Set<string>;
-  setAnsweredQuestions: React.Dispatch<React.SetStateAction<Set<string>>>;
+  questions: Question[]; // Array of questions passed from parent component
 }
 
-const QuestionManager: React.FC<QuestionManagerProps> = ({
-  questions,
-  setActiveQuestions,
-  activeQuestions,
-  answeredQuestions,
-  setAnsweredQuestions,
-}) => {
-  const [inactiveQuestions, setInactiveQuestions] = useState<Question[]>([]);
-  const [guessedQuestions, setGuessedQuestions] = useState<Question[]>([]);
-  const [incorrectQuestions, setIncorrectQuestions] = useState<Question[]>([]);
-  const [incorrectCounts, setIncorrectCounts] = useState<{
-    [key: string]: number;
-  }>({});
+const QuestionManager: React.FC<QuestionManagerProps> = ({ questions }) => {
+  const [allQuestions, setAllQuestions] = useState<Question[]>([]);
+  const [activeQuestions, setActiveQuestions] = useState<Question[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [userAnswer, setUserAnswer] = useState<string>("");
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [lastAskedQuestion, setLastAskedQuestion] = useState<Question | null>(
-    null
-  );
-  const [noRepeat, setNoRepeat] = useState<boolean>(false);
+  const [noRepeat, setNoRepeat] = useState<boolean>(false); // Flag for "No Repeat" checkbox
+  const [totalErrors, setTotalErrors] = useState<number>(0); // Total errors count
 
   // Create a ref for the input element
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  // Initialize inactiveQuestions with all questions at the start
+  // Initialize the questions and active set on component mount
   useEffect(() => {
-    const initialInactiveQuestions = [...questions];
-    const initialActiveQuestions = getRandomQuestions(
-      initialInactiveQuestions,
-      4
-    );
-    setInactiveQuestions(
-      initialInactiveQuestions.filter(
-        (q) => !initialActiveQuestions.includes(q)
-      )
+    const initializedQuestions = questions.map((q) => ({
+      ...q,
+      guessed: 0,
+      errors: 0,
+      active: 0,
+    }));
+
+    const initialActiveQuestions = getRandomQuestions(initializedQuestions, 4);
+    setAllQuestions(
+      initializedQuestions.map((q) => ({
+        ...q,
+        active: initialActiveQuestions.includes(q) ? 1 : 0,
+      }))
     );
     setActiveQuestions(initialActiveQuestions);
     setCurrentQuestion(initialActiveQuestions[0]);
-  }, [questions, setActiveQuestions]);
+  }, [questions]);
 
   // Function to get random questions from a pool
   const getRandomQuestions = (
@@ -65,7 +56,7 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({
     count: number
   ): Question[] => {
     const shuffled = questionPool.sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, Math.min(count, questionPool.length));
+    return shuffled.slice(0, Math.min(count, questionPool.length)); // Limit to the specified count
   };
 
   // Handle checking the answer
@@ -75,60 +66,79 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({
     const correctAnswer = currentQuestion.odpowiedz.trim().toLowerCase();
     const isAnswerCorrect = userAnswer.trim().toLowerCase() === correctAnswer;
 
+    let updatedActiveQuestions = [...activeQuestions];
+    let totalErrorsAcc = totalErrors;
+
+    // Handle a correct answer
     if (isAnswerCorrect) {
       setIsCorrect(true);
-      setGuessedQuestions((prev) => [...prev, currentQuestion]); // Track correct answers
 
-      // Update active questions
-      const updatedActiveQuestions = activeQuestions.filter(
-        (q) => q.pytanie !== currentQuestion.pytanie
+      // Mark the current question as guessed
+      const updatedQuestion = { ...currentQuestion, guessed: 1, active: 0 };
+      const updatedQuestions = allQuestions.map((q) =>
+        q.pytanie === currentQuestion.pytanie ? updatedQuestion : q
       );
 
-      // Add new question from inactive if available
-      if (inactiveQuestions.length > 0) {
-        const newQuestion = getRandomQuestions(inactiveQuestions, 1)[0];
-        updatedActiveQuestions.push(newQuestion);
-        setInactiveQuestions((prev) => prev.filter((q) => q !== newQuestion));
+      // Remove the question from active set and add another if available
+      updatedActiveQuestions = updatedActiveQuestions.filter(
+        (q) => q.pytanie !== currentQuestion.pytanie
+      );
+      const newActiveQuestion = getNextActiveQuestion(updatedQuestions);
+      if (newActiveQuestion) {
+        updatedActiveQuestions = [...updatedActiveQuestions, newActiveQuestion];
       }
 
-      // Update active questions if total is less than or equal to 4
-      if (inactiveQuestions.length + updatedActiveQuestions.length <= 4) {
-        setActiveQuestions([...updatedActiveQuestions, ...inactiveQuestions]);
-        setInactiveQuestions([]);
-      } else {
-        setActiveQuestions(updatedActiveQuestions);
-      }
+      setAllQuestions(updatedQuestions);
+      setActiveQuestions(updatedActiveQuestions);
     } else {
       setIsCorrect(false);
-      setIncorrectCounts((prev) => ({
-        ...prev,
-        [currentQuestion.pytanie]: (prev[currentQuestion.pytanie] || 0) + 1,
-      }));
 
-      // Handle no repeat logic
+      // Handle an incorrect answer
+      const updatedQuestion = {
+        ...currentQuestion,
+        errors: currentQuestion.errors + 1,
+        active: noRepeat ? 0 : 1, // If noRepeat is checked, mark it inactive after an error
+      };
+      const updatedQuestions = allQuestions.map((q) =>
+        q.pytanie === currentQuestion.pytanie ? updatedQuestion : q
+      );
+
+      setAllQuestions(updatedQuestions);
+
+      // Update the total error count
+      totalErrorsAcc += 1;
+      setTotalErrors(totalErrorsAcc);
+
       if (noRepeat) {
-        setIncorrectQuestions((prev) => [...prev, currentQuestion]);
-        setActiveQuestions((prev) =>
-          prev.filter((q) => q.pytanie !== currentQuestion.pytanie)
+        // In 'noRepeat' mode, remove the question and add another
+        updatedActiveQuestions = updatedActiveQuestions.filter(
+          (q) => q.pytanie !== currentQuestion.pytanie
         );
-
-        if (inactiveQuestions.length > 0) {
-          const newQuestion = getRandomQuestions(inactiveQuestions, 1)[0];
-          setActiveQuestions((prev) => [...prev, newQuestion]);
-          setInactiveQuestions((prev) => prev.filter((q) => q !== newQuestion));
-        }
       }
+
+      const newActiveQuestion = getNextActiveQuestion(
+        updatedQuestions,
+        noRepeat
+      );
+      if (newActiveQuestion) {
+        updatedActiveQuestions = [...updatedActiveQuestions, newActiveQuestion];
+      }
+
+      setActiveQuestions(updatedActiveQuestions);
     }
 
     // Set the next question
-    let nextQuestion;
-    do {
-      nextQuestion =
-        activeQuestions[Math.floor(Math.random() * activeQuestions.length)];
-    } while (nextQuestion === lastAskedQuestion && activeQuestions.length > 1);
+    if (updatedActiveQuestions.length > 0) {
+      setCurrentQuestion(
+        updatedActiveQuestions[
+          Math.floor(Math.random() * updatedActiveQuestions.length)
+        ]
+      );
+    } else {
+      setCurrentQuestion(null); // No more active questions
+    }
 
-    setCurrentQuestion(nextQuestion);
-    setLastAskedQuestion(nextQuestion);
+    // Reset user input
     setUserAnswer("");
 
     // Focus the input after moving to the next question
@@ -137,19 +147,43 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({
     }
   };
 
-  const isQuizFinished =
-    activeQuestions.length === 0 && inactiveQuestions.length === 0;
+  // Function to get the next question based on the checkbox state
+  const getNextActiveQuestion = (
+    questions: Question[],
+    fromErrors = false
+  ): Question | null => {
+    const availableQuestions = questions.filter(
+      (q) =>
+        q.guessed === 0 &&
+        (!noRepeat || q.errors === 0) &&
+        (!fromErrors || q.errors > 0)
+    );
+
+    if (availableQuestions.length > 0) {
+      return getRandomQuestions(availableQuestions, 1)[0];
+    }
+    return null;
+  };
+
+  // Check if the quiz is finished
+  const guessedQuestions = allQuestions.filter((q) => q.guessed === 1).length;
+  const erroredQuestions = allQuestions.filter((q) => q.errors > 0).length;
+  const isQuizFinished = noRepeat
+    ? allQuestions.length === guessedQuestions + erroredQuestions
+    : allQuestions.length === guessedQuestions;
 
   return (
     <div className="flex flex-col items-center justify-center mb-6">
-      <Progress
-        totalQuestions={questions.length}
-        guessedCount={guessedQuestions.length} // Count only correct answers
-        incorrectCount={Object.values(incorrectCounts).reduce(
-          (sum, count) => sum + count,
-          0
-        )}
-      />
+      <div className="flex justify-between w-full px-4">
+        <Progress
+          totalQuestions={questions.length}
+          guessedCount={guessedQuestions}
+          incorrectCount={erroredQuestions}
+        />
+        <div className="text-right">
+          <p>Total Errors: {totalErrors}</p>
+        </div>
+      </div>
 
       {!isQuizFinished ? (
         <>
@@ -159,7 +193,7 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({
               userAnswer={userAnswer}
               setUserAnswer={setUserAnswer}
               onCheckAnswer={handleCheckAnswer}
-              inputRef={inputRef} // Pass the inputRef to QuestionCard
+              inputRef={inputRef}
             />
           )}
           {isCorrect !== null && (
@@ -183,33 +217,32 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({
         </>
       ) : (
         <FinalScore
-          correctCount={guessedQuestions.length}
+          correctCount={guessedQuestions}
           totalCount={questions.length}
-          incorrectCount={Object.values(incorrectCounts).reduce(
-            (sum, count) => sum + count,
-            0
-          )} // Pass incorrectCount
         />
       )}
 
       <ul className="mt-4">
-        {questions.map((q, index) => (
+        {allQuestions.map((q, index) => (
           <li
             key={index}
             className={`p-2 ${
-              guessedQuestions.includes(q)
+              q.guessed === 1
                 ? "bg-green-300"
-                : incorrectQuestions.includes(q)
+                : q.errors > 0
                 ? "bg-red-300"
-                : activeQuestions.includes(q)
+                : q.active === 1
                 ? "border border-blue-400"
                 : "bg-white"
             }`}
           >
             {q.pytanie}
-            {incorrectCounts[q.pytanie] > 0 && (
+            {q.guessed === 1 && (
+              <span className="text-green-500 ml-2">(Guessed)</span>
+            )}
+            {q.errors > 0 && (
               <span className="text-red-500 ml-2">
-                (Wrong Attempts: {incorrectCounts[q.pytanie]})
+                (Wrong Attempts: {q.errors})
               </span>
             )}
           </li>
