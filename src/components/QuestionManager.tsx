@@ -48,13 +48,6 @@ const QuestionManager: React.FC<{ questions: Question[] }> = ({
     setCurrentQuestion(initialActiveQuestions[0]);
   }, [questions]);
 
-  // Focus the input after the component mounts
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [currentQuestion]);
-
   // Function to get random questions from a pool
   const getRandomQuestions = (
     questionPool: Question[],
@@ -73,32 +66,35 @@ const QuestionManager: React.FC<{ questions: Question[] }> = ({
 
     if (isAnswerCorrect) {
       setIsCorrect(true);
-      setGuessedQuestions((prev) => [...prev, currentQuestion]);
+      setGuessedQuestions((prev) => [...prev, currentQuestion]); // Track correct answers
 
+      // Update active questions
       const updatedActiveQuestions = activeQuestions.filter(
         (q) => q.pytanie !== currentQuestion.pytanie
       );
 
+      // Add new question from inactive if available
       if (inactiveQuestions.length > 0) {
         const newQuestion = getRandomQuestions(inactiveQuestions, 1)[0];
         updatedActiveQuestions.push(newQuestion);
         setInactiveQuestions((prev) => prev.filter((q) => q !== newQuestion));
       }
 
-      setActiveQuestions(updatedActiveQuestions);
-
+      // Update active questions if total is less than or equal to 4
       if (inactiveQuestions.length + updatedActiveQuestions.length <= 4) {
         setActiveQuestions([...updatedActiveQuestions, ...inactiveQuestions]);
         setInactiveQuestions([]);
+      } else {
+        setActiveQuestions(updatedActiveQuestions);
       }
     } else {
       setIsCorrect(false);
-
       setIncorrectCounts((prev) => ({
         ...prev,
         [currentQuestion.pytanie]: (prev[currentQuestion.pytanie] || 0) + 1,
       }));
 
+      // Handle no repeat logic
       if (noRepeat) {
         setIncorrectQuestions((prev) => [...prev, currentQuestion]);
         setActiveQuestions((prev) =>
@@ -113,6 +109,7 @@ const QuestionManager: React.FC<{ questions: Question[] }> = ({
       }
     }
 
+    // Set the next question
     let nextQuestion;
     do {
       nextQuestion =
@@ -123,6 +120,7 @@ const QuestionManager: React.FC<{ questions: Question[] }> = ({
     setLastAskedQuestion(nextQuestion);
     setUserAnswer("");
 
+    // Focus the input after moving to the next question
     if (inputRef.current) {
       inputRef.current.focus();
     }
@@ -135,7 +133,7 @@ const QuestionManager: React.FC<{ questions: Question[] }> = ({
     <div className="flex flex-col items-center justify-center mb-6">
       <Progress
         totalQuestions={questions.length}
-        guessedCount={guessedQuestions.length}
+        guessedCount={guessedQuestions.length} // Count only correct answers
         incorrectCount={Object.values(incorrectCounts).reduce(
           (sum, count) => sum + count,
           0
@@ -150,7 +148,7 @@ const QuestionManager: React.FC<{ questions: Question[] }> = ({
               userAnswer={userAnswer}
               setUserAnswer={setUserAnswer}
               onCheckAnswer={handleCheckAnswer}
-              inputRef={inputRef}
+              inputRef={inputRef} // Pass the inputRef to QuestionCard
             />
           )}
           {isCorrect !== null && (
@@ -176,6 +174,10 @@ const QuestionManager: React.FC<{ questions: Question[] }> = ({
         <FinalScore
           correctCount={guessedQuestions.length}
           totalCount={questions.length}
+          incorrectCount={Object.values(incorrectCounts).reduce(
+            (sum, count) => sum + count,
+            0
+          )} // Pass incorrectCount
         />
       )}
 

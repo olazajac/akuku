@@ -49,11 +49,11 @@ const SinglePost = () => {
       <p className="mb-4">{post.acf.test.length} Questions</p>
 
       <QuestionManager
-        questions={post.acf.test} // Pass the array of questions
+        questions={post.acf.test} // Pass the array of questions from the post
         setActiveQuestions={setActiveQuestions}
         activeQuestions={activeQuestions}
-        answeredQuestions={answeredQuestions} // Pass answered questions
-        setAnsweredQuestions={setAnsweredQuestions} // Pass setter for answered questions
+        answeredQuestions={answeredQuestions}
+        setAnsweredQuestions={setAnsweredQuestions}
       />
 
       {/* <ul className="mt-4">

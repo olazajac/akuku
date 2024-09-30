@@ -1,4 +1,3 @@
-// src/components/Progress.tsx
 import React from "react";
 
 interface ProgressProps {
@@ -12,7 +11,7 @@ const Progress: React.FC<ProgressProps> = ({
   guessedCount,
   incorrectCount,
 }) => {
-  const totalAnswered = guessedCount + incorrectCount;
+  const totalAnswered = guessedCount; // Only track correct answers for progress
   const progressPercentage = (totalAnswered / totalQuestions) * 100;
   const questionsLeft = totalQuestions - totalAnswered;
 
