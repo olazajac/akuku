@@ -1,52 +1,44 @@
 "use client"; // Ensure this is a Client Component
 
-import React from "react";
-import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 
-// Define the type for the post data
-type PostType = {
+// Define the type of the data you expect
+type DataType = {
   id: number;
   title: string;
   content: string;
 };
 
-// Simulated function to fetch post data
-const fetchPostData = async (id: number): Promise<PostType> => {
-  // Replace this mock data with a real API call
-  return {
-    id,
-    title: `Post ${id}`,
-    content: `This is the content of post ${id}.`,
-  };
+// Simulated function to fetch data (replace this with actual fetch call)
+const fetchData = async (): Promise<DataType[]> => {
+  return [
+    { id: 1, title: "First Post", content: "This is the first post." },
+    { id: 2, title: "Second Post", content: "This is the second post." },
+  ];
 };
 
-const PostPage: React.FC = () => {
-  const router = useRouter();
-  const { id } = router.query;
+const Page: React.FC = () => {
+  // Move all hook calls outside of any conditionals
+  const [data, setData] = useState<DataType[]>([]); // Specify type of data
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!id || typeof id !== "string") {
-    return <div>Invalid post ID</div>;
-  }
-
-  const [post, setPost] = React.useState<PostType | null>(null);
-  const [loading, setLoading] = React.useState<boolean>(true);
-  const [error, setError] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    const loadPost = async () => {
+  useEffect(() => {
+    const loadData = async () => {
       try {
-        const postData = await fetchPostData(Number(id));
-        setPost(postData);
+        const fetchedData = await fetchData();
+        setData(fetchedData);
       } catch {
-        setError("Failed to load post");
+        setError("Failed to load data");
       } finally {
         setLoading(false);
       }
     };
 
-    loadPost();
-  }, [id]);
+    loadData();
+  }, []); // Empty dependency array ensures this runs once
 
+  // Conditional logic after hook calls
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -57,10 +49,17 @@ const PostPage: React.FC = () => {
 
   return (
     <div>
-      <h1>{post?.title}</h1>
-      <p>{post?.content}</p>
+      <h1>Posts</h1>
+      <ul>
+        {data.map((item) => (
+          <li key={item.id}>
+            <h2>{item.title}</h2>
+            <p>{item.content}</p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
 
-export default PostPage;
+export default Page;
