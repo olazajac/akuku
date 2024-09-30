@@ -1,3 +1,5 @@
+"use client"; // This line marks the file as a Client Component
+
 import React, { useEffect, useState } from "react";
 
 // Define the type of the data you expect
