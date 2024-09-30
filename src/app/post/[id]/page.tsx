@@ -5,11 +5,25 @@ import { useParams } from "next/navigation";
 import { fetchSinglePost } from "../../../lib/api";
 import QuestionManager from "../../../components/QuestionManager";
 
+// Define the structure of a post
+type Post = {
+  title: { rendered: string };
+  acf: {
+    test: Question[]; // Ensure Question type is defined
+  };
+};
+
+// Ensure Question type is defined (can be imported if defined elsewhere)
+type Question = {
+  pytanie: string;
+  odpowiedz: string;
+};
+
 const SinglePost: React.FC = () => {
   const { id } = useParams(); // Get post ID from dynamic route
-  const [post, setPost] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [activeQuestions, setActiveQuestions] = useState<any[]>([]);
+  const [post, setPost] = useState<Post | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [activeQuestions, setActiveQuestions] = useState<Question[]>([]);
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(
     new Set()
   );

@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Client-side rendering for hooks
 
 import React, { useState, useEffect, useRef } from "react";
 import QuestionCard from "./QuestionCard";
@@ -11,11 +11,22 @@ type Question = {
   odpowiedz: string;
 };
 
-const QuestionManager: React.FC<{ questions: Question[] }> = ({
+interface QuestionManagerProps {
+  questions: Question[];
+  setActiveQuestions: React.Dispatch<React.SetStateAction<Question[]>>;
+  activeQuestions: Question[];
+  answeredQuestions: Set<string>;
+  setAnsweredQuestions: React.Dispatch<React.SetStateAction<Set<string>>>;
+}
+
+const QuestionManager: React.FC<QuestionManagerProps> = ({
   questions,
+  setActiveQuestions,
+  activeQuestions,
+  answeredQuestions,
+  setAnsweredQuestions,
 }) => {
   const [inactiveQuestions, setInactiveQuestions] = useState<Question[]>([]);
-  const [activeQuestions, setActiveQuestions] = useState<Question[]>([]);
   const [guessedQuestions, setGuessedQuestions] = useState<Question[]>([]);
   const [incorrectQuestions, setIncorrectQuestions] = useState<Question[]>([]);
   const [incorrectCounts, setIncorrectCounts] = useState<{
@@ -46,7 +57,7 @@ const QuestionManager: React.FC<{ questions: Question[] }> = ({
     );
     setActiveQuestions(initialActiveQuestions);
     setCurrentQuestion(initialActiveQuestions[0]);
-  }, [questions]);
+  }, [questions, setActiveQuestions]);
 
   // Function to get random questions from a pool
   const getRandomQuestions = (
