@@ -1,42 +1,26 @@
-// src/components/QuestionCard.tsx
-
 import React from "react";
 
-interface QuestionCardProps {
-  question: string; // The question text
-  userAnswer: string; // The user's answer
-  setUserAnswer: (answer: string) => void; // Function to update the answer
-  onCheckAnswer: () => void; // Function to check the answer
-}
-
-const QuestionCard: React.FC<QuestionCardProps> = ({
-  question,
-  userAnswer,
-  setUserAnswer,
-  onCheckAnswer,
-}) => {
-  // Function to handle key down events
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      event.preventDefault(); // Prevent form submission if inside a form
-      onCheckAnswer(); // Check the answer
-    }
-  };
-
+const QuestionCard: React.FC<{
+  question: string;
+  userAnswer: string;
+  setUserAnswer: (answer: string) => void;
+  onCheckAnswer: () => void;
+  inputRef: React.RefObject<HTMLInputElement>; // Accept the inputRef prop
+}> = ({ question, userAnswer, setUserAnswer, onCheckAnswer, inputRef }) => {
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-2">{question}</h2>
+    <div className="border p-4 rounded-md shadow-md">
+      <h2 className="text-xl mb-4">{question}</h2>
       <input
+        ref={inputRef} // Attach the inputRef to the input element
         type="text"
         value={userAnswer}
         onChange={(e) => setUserAnswer(e.target.value)}
-        onKeyDown={handleKeyDown} // Attach the key down event
-        className="border border-gray-300 rounded-md p-2 w-full text-black"
-        placeholder="Type your answer here..."
+        className="border rounded p-2 w-full"
+        placeholder="Type your answer here"
       />
       <button
         onClick={onCheckAnswer}
-        className="mt-2 bg-blue-600 text-white rounded-md p-2 hover:bg-blue-700 transition duration-300"
+        className="mt-2 bg-blue-500 text-white p-2 rounded"
       >
         Check Answer
       </button>
