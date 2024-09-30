@@ -24,9 +24,6 @@ const SinglePost: React.FC = () => {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [activeQuestions, setActiveQuestions] = useState<Question[]>([]);
-  const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(
-    new Set()
-  );
 
   useEffect(() => {
     const loadPost = async () => {
@@ -67,8 +64,6 @@ const SinglePost: React.FC = () => {
         questions={post.acf.test} // Pass the array of questions from the post
         setActiveQuestions={setActiveQuestions}
         activeQuestions={activeQuestions}
-        answeredQuestions={answeredQuestions}
-        setAnsweredQuestions={setAnsweredQuestions}
       />
     </div>
   );
