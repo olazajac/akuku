@@ -1,51 +1,75 @@
+// src/app/post/[id]/page.tsx
+"use client"; // Mark this component as a client component
+
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
+import { fetchSinglePost } from "../../../lib/api";
+import QuestionManager from "../../../components/QuestionManager";
 
-type Post = {
-  id: number;
-  title: string;
-  content: string;
-};
-
-const PostPage: React.FC = () => {
-  const router = useRouter();
-  const { id } = router.query;
-
-  const [post, setPost] = useState<Post | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+const SinglePost = () => {
+  const { id } = useParams(); // Get post ID from dynamic route
+  const [post, setPost] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [activeQuestions, setActiveQuestions] = useState<any[]>([]);
+  const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(
+    new Set()
+  );
 
   useEffect(() => {
-    const fetchData = async (postId: number) => {
+    const loadPost = async () => {
       try {
-        const fetchedPost = await fetchPostData(postId);
+        const fetchedPost = await fetchSinglePost(id);
         setPost(fetchedPost);
-      } catch (err) {
-        setError("Error fetching the post");
+      } catch (error) {
+        console.error("Failed to fetch post", error);
       } finally {
         setLoading(false);
       }
     };
 
-    if (id && typeof id === "string") {
-      fetchData(Number(id));
-    }
+    loadPost();
   }, [id]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  useEffect(() => {
+    // Initialize active questions when post is loaded
+    if (post && post.acf && post.acf.test) {
+      const initialQuestions = post.acf.test
+        .sort(() => 0.5 - Math.random()) // Shuffle questions
+        .slice(0, 4); // Pick the first 4 random questions
+      setActiveQuestions(initialQuestions);
+    }
+  }, [post]);
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (!post) return <div>Post not found</div>;
 
   return (
-    <div>
-      <h1>{post?.title}</h1>
-      <p>{post?.content}</p>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold">{post.title.rendered}</h1>
+      <p className="mb-4">{post.acf.test.length} Questions</p>
+
+      <QuestionManager
+        questions={post.acf.test} // Pass the array of questions
+        setActiveQuestions={setActiveQuestions}
+        activeQuestions={activeQuestions}
+        answeredQuestions={answeredQuestions} // Pass answered questions
+        setAnsweredQuestions={setAnsweredQuestions} // Pass setter for answered questions
+      />
+
+      {/* <ul className="mt-4">
+        {post.acf.test.map((q, index) => (
+          <li
+            key={index}
+            className={`p-2 ${
+              answeredQuestions.has(q.pytanie) ? "bg-green-300" : "bg-white"
+            }`}
+          >
+            {q.pytanie}
+          </li>
+        ))}
+      </ul> */}
     </div>
   );
 };
 
-export default PostPage;
+export default SinglePost;

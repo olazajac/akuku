@@ -1,66 +1,54 @@
-"use client"; // Ensure this is a Client Component
+"use client"; // Client-side rendering for hooks
 
-import React from "react";
-import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { fetchPosts } from "../lib/api"; // Make sure the path and function name are correct
 
-// Define the type for the post data
-type PostType = {
-  id: number;
-  title: string;
-  content: string;
-};
+const HomePage = () => {
+  const [posts, setPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-// Simulated function to fetch post data
-const fetchPostData = async (id: number): Promise<PostType> => {
-  return {
-    id,
-    title: `Post ${id}`,
-    content: `This is the content of post ${id}.`,
-  };
-};
-
-const PostPage: React.FC = () => {
-  const router = useRouter();
-  const { id } = router.query;
-
-  // Ensure id is a number before fetching post data
-  if (!id || typeof id !== "string") {
-    return <div>Invalid post ID</div>;
-  }
-
-  const [post, setPost] = React.useState<PostType | null>(null);
-  const [loading, setLoading] = React.useState<boolean>(true);
-  const [error, setError] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    const loadPost = async () => {
+  useEffect(() => {
+    const loadPosts = async () => {
       try {
-        const postData = await fetchPostData(Number(id));
-        setPost(postData);
-      } catch {
-        setError("Failed to load post");
+        const fetchedPosts = await fetchPosts();
+        setPosts(fetchedPosts);
+      } catch (error) {
+        console.error("Failed to fetch posts", error);
+        setError(error);
       } finally {
         setLoading(false);
       }
     };
 
-    loadPost();
-  }, [id]);
+    loadPosts();
+  }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  if (loading) return <div className="text-center text-lg">Loading...</div>;
+  if (error)
+    return <div className="text-center text-red-500">Failed to load posts</div>;
 
   return (
-    <div>
-      <h1>{post?.title}</h1>
-      <p>{post?.content}</p>
+    <div className="container mx-auto p-4">
+      <h1 className="text-4xl font-bold text-center mb-8">Test Posts</h1>
+      <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {posts.map((post) => (
+          <li
+            key={post.id}
+            className="bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+          >
+            <Link href={`/post/${post.id}`} className="block p-4">
+              <h2 className="text-xl font-semibold text-blue-600 hover:underline">
+                {post.title.rendered}
+              </h2>
+              <p className="text-gray-600">{post.acf.test.length} Questions</p>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
 
-export default PostPage;
+export default HomePage;
