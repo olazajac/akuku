@@ -12,6 +12,7 @@ type Question = {
   guessed: number; // 0 if not guessed, 1 if guessed
   errors: number; // Count of incorrect answers
   active: number; // 1 if the question is currently active, 0 otherwise
+  IsCurrent: number; // 1 if the question is the current one, 0 otherwise
 };
 
 interface QuestionManagerProps {
@@ -37,53 +38,56 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({ questions }) => {
       guessed: 0,
       errors: 0,
       active: 0,
+      IsCurrent: 0,
     }));
 
     const initialActiveQuestions = getRandomQuestions(initializedQuestions, 4);
+    const firstActiveQuestion = initialActiveQuestions[0];
+    
     setAllQuestions(
       initializedQuestions.map((q) => ({
         ...q,
         active: initialActiveQuestions.includes(q) ? 1 : 0,
+        IsCurrent: q === firstActiveQuestion ? 1 : 0,
       }))
     );
+    
     setActiveQuestions(initialActiveQuestions);
-    setCurrentQuestion(initialActiveQuestions[0]);
+    setCurrentQuestion(firstActiveQuestion);
   }, [questions]);
 
   // Function to get random questions from a pool
-  const getRandomQuestions = (
-    questionPool: Question[],
-    count: number
-  ): Question[] => {
+  const getRandomQuestions = (questionPool: Question[], count: number): Question[] => {
     const shuffled = questionPool.sort(() => 0.5 - Math.random());
     return shuffled.slice(0, Math.min(count, questionPool.length)); // Limit to the specified count
   };
 
-  // Handle checking the answer
+  // Handle checking the answer on Enter
   const handleCheckAnswer = () => {
     if (!currentQuestion) return;
 
     const correctAnswer = currentQuestion.odpowiedz.trim().toLowerCase();
     const isAnswerCorrect = userAnswer.trim().toLowerCase() === correctAnswer;
-
+    
     let updatedActiveQuestions = [...activeQuestions];
     let totalErrorsAcc = totalErrors;
 
-    // Handle a correct answer
     if (isAnswerCorrect) {
+      // Correct answer logic
       setIsCorrect(true);
 
-      // Mark the current question as guessed
-      const updatedQuestion = { ...currentQuestion, guessed: 1, active: 0 };
+      const updatedQuestion = { ...currentQuestion, guessed: 1, active: 0, IsCurrent: 0 };
       const updatedQuestions = allQuestions.map((q) =>
         q.pytanie === currentQuestion.pytanie ? updatedQuestion : q
       );
 
-      // Remove the question from active set and add another if available
-      updatedActiveQuestions = updatedActiveQuestions.filter(
-        (q) => q.pytanie !== currentQuestion.pytanie
-      );
-      const newActiveQuestion = getNextActiveQuestion(updatedQuestions);
+      updatedActiveQuestions = updatedActiveQuestions.filter((q) => q.pytanie !== currentQuestion.pytanie);
+      
+      // If repeat is off (noRepeat is false), activate new question if available
+      const newActiveQuestion = noRepeat
+        ? getNextQuestion(updatedQuestions, false, true)
+        : getNextQuestion(updatedQuestions, true, false);
+      
       if (newActiveQuestion) {
         updatedActiveQuestions = [...updatedActiveQuestions, newActiveQuestion];
       }
@@ -91,78 +95,69 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({ questions }) => {
       setAllQuestions(updatedQuestions);
       setActiveQuestions(updatedActiveQuestions);
     } else {
+      // Wrong answer logic
       setIsCorrect(false);
-
-      // Handle an incorrect answer
-      const updatedQuestion = {
-        ...currentQuestion,
-        errors: currentQuestion.errors + 1,
-        active: noRepeat ? 0 : 1, // If noRepeat is checked, mark it inactive after an error
+      
+      const updatedQuestion = { 
+        ...currentQuestion, 
+        errors: currentQuestion.errors + 1, 
+        active: noRepeat ? 0 : 1, // Deactivate if no repeat is on
+        IsCurrent: 0
       };
+
       const updatedQuestions = allQuestions.map((q) =>
         q.pytanie === currentQuestion.pytanie ? updatedQuestion : q
       );
 
-      setAllQuestions(updatedQuestions);
-
-      // Update the total error count
       totalErrorsAcc += 1;
       setTotalErrors(totalErrorsAcc);
 
       if (noRepeat) {
-        // In 'noRepeat' mode, remove the question and add another
         updatedActiveQuestions = updatedActiveQuestions.filter(
           (q) => q.pytanie !== currentQuestion.pytanie
         );
       }
 
-      const newActiveQuestion = getNextActiveQuestion(
-        updatedQuestions,
-        noRepeat
-      );
+      const newActiveQuestion = noRepeat
+        ? getNextQuestion(updatedQuestions, false, true)
+        : getNextQuestion(updatedQuestions, true, false);
+
       if (newActiveQuestion) {
         updatedActiveQuestions = [...updatedActiveQuestions, newActiveQuestion];
       }
 
+      setAllQuestions(updatedQuestions);
       setActiveQuestions(updatedActiveQuestions);
     }
 
-    // Set the next question
+    // Set the next current question
     if (updatedActiveQuestions.length > 0) {
-      setCurrentQuestion(
-        updatedActiveQuestions[
-          Math.floor(Math.random() * updatedActiveQuestions.length)
-        ]
+      const newCurrentQuestion = updatedActiveQuestions[Math.floor(Math.random() * updatedActiveQuestions.length)];
+      setCurrentQuestion(newCurrentQuestion);
+
+      // Update `IsCurrent` for new current question
+      const updatedQuestions = allQuestions.map((q) =>
+        q.pytanie === newCurrentQuestion.pytanie ? { ...q, IsCurrent: 1 } : { ...q, IsCurrent: 0 }
       );
+      setAllQuestions(updatedQuestions);
     } else {
       setCurrentQuestion(null); // No more active questions
     }
 
-    // Reset user input
-    setUserAnswer("");
-
-    // Focus the input after moving to the next question
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
+    setUserAnswer(""); // Reset the answer input
+    inputRef.current?.focus(); // Focus on the input again
   };
 
-  // Function to get the next question based on the checkbox state
-  const getNextActiveQuestion = (
-    questions: Question[],
-    fromErrors = false
-  ): Question | null => {
+  // Function to get the next question based on conditions
+  const getNextQuestion = (questions: Question[], checkActive = true, checkErrors = false): Question | null => {
     const availableQuestions = questions.filter(
       (q) =>
         q.guessed === 0 &&
-        (!noRepeat || q.errors === 0) &&
-        (!fromErrors || q.errors > 0)
+        (!checkActive || q.active === 1) &&
+        (!checkErrors || q.errors > 0)
     );
 
-    if (availableQuestions.length > 0) {
-      return getRandomQuestions(availableQuestions, 1)[0];
-    }
-    return null;
+    return availableQuestions.length > 0 ? getRandomQuestions(availableQuestions, 1)[0] : null;
   };
 
   // Check if the quiz is finished
@@ -175,11 +170,7 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({ questions }) => {
   return (
     <div className="flex flex-col items-center justify-center mb-6">
       <div className="flex justify-between w-full px-4">
-        <Progress
-          totalQuestions={questions.length}
-          guessedCount={guessedQuestions}
-          incorrectCount={erroredQuestions}
-        />
+        <Progress totalQuestions={questions.length} guessedCount={guessedQuestions} incorrectCount={erroredQuestions} />
         <div className="text-right">
           <p>Total Errors: {totalErrors}</p>
         </div>
@@ -197,11 +188,7 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({ questions }) => {
             />
           )}
           {isCorrect !== null && (
-            <p
-              className={`mt-2 ${
-                isCorrect ? "text-green-300" : "text-red-300"
-              }`}
-            >
+            <p className={`mt-2 ${isCorrect ? "text-green-300" : "text-red-300"}`}>
               {isCorrect ? "Correct!" : "Incorrect. Try again!"}
             </p>
           )}
@@ -216,35 +203,15 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({ questions }) => {
           </label>
         </>
       ) : (
-        <FinalScore
-          correctCount={guessedQuestions}
-          totalCount={questions.length}
-        />
+        <FinalScore correctCount={guessedQuestions} totalCount={questions.length} />
       )}
 
       <ul className="mt-4">
         {allQuestions.map((q, index) => (
-          <li
-            key={index}
-            className={`p-2 ${
-              q.guessed === 1
-                ? "bg-green-300"
-                : q.errors > 0
-                ? "bg-red-300"
-                : q.active === 1
-                ? "border border-blue-400"
-                : "bg-white"
-            }`}
-          >
+          <li key={index} className={`p-2 ${q.guessed === 1 ? "bg-green-300" : q.errors > 0 ? "bg-red-300" : q.active === 1 ? "border border-blue-400" : "bg-white"}`}>
             {q.pytanie}
-            {q.guessed === 1 && (
-              <span className="text-green-500 ml-2">(Guessed)</span>
-            )}
-            {q.errors > 0 && (
-              <span className="text-red-500 ml-2">
-                (Wrong Attempts: {q.errors})
-              </span>
-            )}
+            {q.guessed === 1 && <span className="text-green-500 ml-2">(Guessed)</span>}
+            {q.errors > 0 && <span className="text-red-500 ml-2">(Wrong Attempts: {q.errors})</span>}
           </li>
         ))}
       </ul>
