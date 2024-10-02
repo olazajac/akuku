@@ -62,6 +62,7 @@ const SinglePost: React.FC = () => {
         IsCurrent: 0, // Initialize as not current
       }));
 
+      // Shuffle and select the first 4 questions for the game
       const shuffledQuestions = initializedQuestions.sort(() => 0.5 - Math.random()).slice(0, 4);
       setActiveQuestions(shuffledQuestions);
     }
@@ -75,6 +76,7 @@ const SinglePost: React.FC = () => {
       <h1 className="text-2xl font-bold">{post.title.rendered}</h1>
       <p className="mb-4">{post.acf.test.length} Questions</p>
 
+      {/* Pass the transformed questions (ExtendedQuestion[]) to QuestionManager */}
       <QuestionManager
         questions={activeQuestions} // Pass the initialized and extended array of questions
         setActiveQuestions={setActiveQuestions}
