@@ -15,11 +15,10 @@ type Question = {
 };
 
 interface QuestionManagerProps {
-  questions: Question[]; // Array of questions passed from the parent component
-  setActiveQuestions: React.Dispatch<React.SetStateAction<Question[]>>;
-  activeQuestions: Question[];
+  questions: ExtendedQuestion[]; // Expect the extended version of the question
+  setActiveQuestions: React.Dispatch<React.SetStateAction<ExtendedQuestion[]>>;
+  activeQuestions: ExtendedQuestion[];
 }
-
 const QuestionManager: React.FC<QuestionManagerProps> = ({
   questions,
   setActiveQuestions,
