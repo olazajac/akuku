@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import QuestionCard from "./QuestionCard";
-import FinalScore from "./FinalScore";
 import Progress from "./Progress";
 
 // Define the structure of an extended question
