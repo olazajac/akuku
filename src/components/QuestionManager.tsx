@@ -27,7 +27,6 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [userAnswer, setUserAnswer] = useState<string>("");
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [noRepeat, setNoRepeat] = useState<boolean>(false); // Flag for "No Repeat" checkbox
   const [totalErrors, setTotalErrors] = useState<number>(0); // Total errors count
 
   const inputRef = useRef<HTMLInputElement | null>(null);
