@@ -9,9 +9,8 @@ import Progress from "./Progress";
 type Question = {
   pytanie: string; // The question text
   odpowiedz: string; // The correct answer
-  guessed: number; // 0 if not guessed, 1 if guessed
-  errors: number; // Count of incorrect answers
-  active: number; // 1 if the question is currently active, 0 otherwise
+  wrongAttempts: number; // Count of incorrect answers
+  goodAttempts: number; // Count of correct answers
 };
 
 interface QuestionManagerProps {
@@ -25,7 +24,6 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({ questions }) => {
   const [userAnswer, setUserAnswer] = useState<string>("");
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [noRepeat, setNoRepeat] = useState<boolean>(false); // Flag for "No Repeat" checkbox
-  const [totalErrors, setTotalErrors] = useState<number>(0); // Total errors count
 
   // Create a ref for the input element
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -34,20 +32,13 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({ questions }) => {
   useEffect(() => {
     const initializedQuestions = questions.map((q) => ({
       ...q,
-      guessed: 0,
-      errors: 0,
-      active: 0,
+      wrongAttempts: 0,
+      goodAttempts: 0,
     }));
 
-    const initialActiveQuestions = getRandomQuestions(initializedQuestions, 4);
-    setAllQuestions(
-      initializedQuestions.map((q) => ({
-        ...q,
-        active: initialActiveQuestions.includes(q) ? 1 : 0,
-      }))
-    );
-    setActiveQuestions(initialActiveQuestions);
-    setCurrentQuestion(initialActiveQuestions[0]);
+    setAllQuestions(initializedQuestions);
+    setActiveQuestions(getRandomQuestions(initializedQuestions, 4));
+    setCurrentQuestion(initializedQuestions[0]);
   }, [questions]);
 
   // Function to get random questions from a pool
@@ -66,76 +57,45 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({ questions }) => {
     const correctAnswer = currentQuestion.odpowiedz.trim().toLowerCase();
     const isAnswerCorrect = userAnswer.trim().toLowerCase() === correctAnswer;
 
-    let updatedActiveQuestions = [...activeQuestions];
-    let totalErrorsAcc = totalErrors;
+    // Increment the wrongAttempts if the answer is incorrect
+    const updatedQuestion = {
+      ...currentQuestion,
+      wrongAttempts: isAnswerCorrect
+        ? currentQuestion.wrongAttempts
+        : currentQuestion.wrongAttempts + 1,
+      goodAttempts: isAnswerCorrect
+        ? currentQuestion.goodAttempts + 1
+        : currentQuestion.goodAttempts,
+    };
 
-    // Handle a correct answer
+    const updatedQuestions = allQuestions.map((q) =>
+      q.pytanie === currentQuestion.pytanie ? updatedQuestion : q
+    );
+
+    // Update all questions state
+    setAllQuestions(updatedQuestions);
+
+    // Handle new question selection based on checkbox
     if (isAnswerCorrect) {
       setIsCorrect(true);
-
-      // Mark the current question as guessed
-      const updatedQuestion = { ...currentQuestion, guessed: 1, active: 0 };
-      const updatedQuestions = allQuestions.map((q) =>
-        q.pytanie === currentQuestion.pytanie ? updatedQuestion : q
-      );
-
-      // Remove the question from active set and add another if available
-      updatedActiveQuestions = updatedActiveQuestions.filter(
-        (q) => q.pytanie !== currentQuestion.pytanie
-      );
-      const newActiveQuestion = getNextActiveQuestion(updatedQuestions);
-      if (newActiveQuestion) {
-        updatedActiveQuestions = [...updatedActiveQuestions, newActiveQuestion];
-      }
-
-      setAllQuestions(updatedQuestions);
-      setActiveQuestions(updatedActiveQuestions);
     } else {
       setIsCorrect(false);
-
-      // Handle an incorrect answer
-      const updatedQuestion = {
-        ...currentQuestion,
-        errors: currentQuestion.errors + 1,
-        active: noRepeat ? 0 : 1, // If noRepeat is checked, mark it inactive after an error
-      };
-      const updatedQuestions = allQuestions.map((q) =>
-        q.pytanie === currentQuestion.pytanie ? updatedQuestion : q
-      );
-
-      setAllQuestions(updatedQuestions);
-
-      // Update the total error count
-      totalErrorsAcc += 1;
-      setTotalErrors(totalErrorsAcc);
-
+      // Handle question repetition logic
       if (noRepeat) {
-        // In 'noRepeat' mode, remove the question and add another
-        updatedActiveQuestions = updatedActiveQuestions.filter(
-          (q) => q.pytanie !== currentQuestion.pytanie
+        // If noRepeat is checked, find a question with goodAttempts === 0 and wrongAttempts === 0
+        const nextQuestion = updatedQuestions.find(
+          (q) => q.goodAttempts === 0 && q.wrongAttempts === 0
         );
+        if (nextQuestion) {
+          setCurrentQuestion(nextQuestion);
+        } else {
+          setCurrentQuestion(null); // No more questions available
+        }
+      } else {
+        // If noRepeat is unchecked, pick another question with goodAttempts === 0
+        const nextQuestion = updatedQuestions.find((q) => q.goodAttempts === 0);
+        setCurrentQuestion(nextQuestion || null);
       }
-
-      const newActiveQuestion = getNextActiveQuestion(
-        updatedQuestions,
-        noRepeat
-      );
-      if (newActiveQuestion) {
-        updatedActiveQuestions = [...updatedActiveQuestions, newActiveQuestion];
-      }
-
-      setActiveQuestions(updatedActiveQuestions);
-    }
-
-    // Set the next question
-    if (updatedActiveQuestions.length > 0) {
-      setCurrentQuestion(
-        updatedActiveQuestions[
-          Math.floor(Math.random() * updatedActiveQuestions.length)
-        ]
-      );
-    } else {
-      setCurrentQuestion(null); // No more active questions
     }
 
     // Reset user input
@@ -147,43 +107,27 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({ questions }) => {
     }
   };
 
-  // Function to get the next question based on the checkbox state
-  const getNextActiveQuestion = (
-    questions: Question[],
-    fromErrors = false
-  ): Question | null => {
-    const availableQuestions = questions.filter(
-      (q) =>
-        q.guessed === 0 &&
-        (!noRepeat || q.errors === 0) &&
-        (!fromErrors || q.errors > 0)
-    );
-
-    if (availableQuestions.length > 0) {
-      return getRandomQuestions(availableQuestions, 1)[0];
-    }
-    return null;
-  };
+  // Calculate total errors across all questions
+  const totalErrors = allQuestions.reduce(
+    (sum, question) => sum + question.wrongAttempts,
+    0
+  );
 
   // Check if the quiz is finished
-  const guessedQuestions = allQuestions.filter((q) => q.guessed === 1).length;
-  const erroredQuestions = allQuestions.filter((q) => q.errors > 0).length;
+  const guessedQuestions = allQuestions.filter(
+    (q) => q.goodAttempts > 0
+  ).length;
   const isQuizFinished = noRepeat
-    ? allQuestions.length === guessedQuestions + erroredQuestions
-    : allQuestions.length === guessedQuestions;
+    ? allQuestions.length === guessedQuestions + totalErrors
+    : guessedQuestions === allQuestions.length;
 
   return (
     <div className="flex flex-col items-center justify-center mb-6">
-      <div className="flex justify-between w-full px-4">
-        <Progress
-          totalQuestions={questions.length}
-          guessedCount={guessedQuestions}
-          incorrectCount={erroredQuestions}
-        />
-        <div className="text-right">
-          <p>Total Errors: {totalErrors}</p>
-        </div>
-      </div>
+      <Progress
+        totalQuestions={questions.length + totalErrors} // Dynamic based on errors
+        guessedCount={guessedQuestions}
+        incorrectCount={totalErrors} // Pass total errors as incorrect count
+      />
 
       {!isQuizFinished ? (
         <>
@@ -227,22 +171,20 @@ const QuestionManager: React.FC<QuestionManagerProps> = ({ questions }) => {
           <li
             key={index}
             className={`p-2 ${
-              q.guessed === 1
+              q.goodAttempts > 0
                 ? "bg-green-300"
-                : q.errors > 0
+                : q.wrongAttempts > 0
                 ? "bg-red-300"
-                : q.active === 1
-                ? "border border-blue-400"
                 : "bg-white"
             }`}
           >
             {q.pytanie}
-            {q.guessed === 1 && (
+            {q.goodAttempts > 0 && (
               <span className="text-green-500 ml-2">(Guessed)</span>
             )}
-            {q.errors > 0 && (
+            {q.wrongAttempts > 0 && (
               <span className="text-red-500 ml-2">
-                (Wrong Attempts: {q.errors})
+                (Wrong Attempts: {q.wrongAttempts})
               </span>
             )}
           </li>

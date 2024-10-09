@@ -4,12 +4,14 @@ interface ProgressProps {
   totalQuestions: number;
   guessedCount: number;
   incorrectCount: number;
+  totalErrors: number; // Added totalErrors prop
 }
 
 const Progress: React.FC<ProgressProps> = ({
   totalQuestions,
   guessedCount,
   incorrectCount,
+  totalErrors,
 }) => {
   const totalAnswered = guessedCount; // Only track correct answers for progress
   const progressPercentage = (totalAnswered / totalQuestions) * 100;
@@ -20,7 +22,10 @@ const Progress: React.FC<ProgressProps> = ({
       <div className="flex items-center justify-between mb-2">
         <p className="text-sm font-semibold">Questions Left: {questionsLeft}</p>
         <p className="text-sm font-semibold">Correct Answers: {guessedCount}</p>
-        <p className="text-sm font-semibold">Total Errors: {incorrectCount}</p>
+        <p className="text-sm font-semibold">
+          Total Errors: {totalErrors}
+        </p>{" "}
+        {/* Display total errors */}
       </div>
       <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
         <div
