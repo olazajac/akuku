@@ -1,19 +1,18 @@
+// src/components/Progress.tsx
 import React from "react";
 
 interface ProgressProps {
   totalQuestions: number;
   guessedCount: number;
   incorrectCount: number;
-  totalErrors: number; // Added totalErrors prop
 }
 
 const Progress: React.FC<ProgressProps> = ({
   totalQuestions,
   guessedCount,
   incorrectCount,
-  totalErrors,
 }) => {
-  const totalAnswered = guessedCount; // Only track correct answers for progress
+  const totalAnswered = guessedCount + incorrectCount;
   const progressPercentage = (totalAnswered / totalQuestions) * 100;
   const questionsLeft = totalQuestions - totalAnswered;
 
@@ -22,10 +21,7 @@ const Progress: React.FC<ProgressProps> = ({
       <div className="flex items-center justify-between mb-2">
         <p className="text-sm font-semibold">Questions Left: {questionsLeft}</p>
         <p className="text-sm font-semibold">Correct Answers: {guessedCount}</p>
-        <p className="text-sm font-semibold">
-          Total Errors: {totalErrors}
-        </p>{" "}
-        {/* Display total errors */}
+        <p className="text-sm font-semibold">Total Errors: {incorrectCount}</p>
       </div>
       <div className="w-full bg-gray-200 rounded-full h-4 mb-4">
         <div

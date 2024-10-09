@@ -4,21 +4,10 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { fetchPosts } from "../lib/api"; // Make sure the path and function name are correct
 
-// Define interfaces for Post and ACF
-interface ACF {
-  test: any[]; // Define this based on the structure of your ACF data
-}
-
-interface Post {
-  id: number;
-  title: { rendered: string };
-  acf: ACF; // Add other fields as necessary
-}
-
-const HomePage: React.FC = () => {
-  const [posts, setPosts] = useState<Post[]>([]); // Specify Post type
-  const [loading, setLoading] = useState<boolean>(true); // Specify boolean type for loading
-  const [error, setError] = useState<Error | null>(null); // Specify error type
+const HomePage = () => {
+  const [posts, setPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const loadPosts = async () => {
@@ -27,11 +16,7 @@ const HomePage: React.FC = () => {
         setPosts(fetchedPosts);
       } catch (error) {
         console.error("Failed to fetch posts", error);
-        if (error instanceof Error) {
-          setError(error);
-        } else {
-          setError(new Error("An unknown error occurred."));
-        }
+        setError(error);
       } finally {
         setLoading(false);
       }
