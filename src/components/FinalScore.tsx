@@ -8,7 +8,7 @@ interface FinalScoreProps {
 
 const FinalScore: React.FC<FinalScoreProps> = ({
   guessedCount,
-  totalQuestions,
+
   incorrectCount,
 }) => {
   return (

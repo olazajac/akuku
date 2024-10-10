@@ -17,9 +17,7 @@ const QuestionManager: React.FC<{
 }> = ({ questions }) => {
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
-  const [previousQuestion, setPreviousQuestion] = useState<Question | null>(
-    null
-  ); // Track previous question
+
   const [userAnswer, setUserAnswer] = useState<string>("");
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -51,7 +49,6 @@ const QuestionManager: React.FC<{
 
     // Set the current question to the first hot question
     setCurrentQuestion(initialHotQuestions[0]);
-    setPreviousQuestion(null); // Initialize previous question as null
 
     // Focus the input after loading
     if (inputRef.current) {
@@ -135,10 +132,8 @@ const QuestionManager: React.FC<{
     return shuffledQuestions.filter((q) => q.hot === 1 && q.guessed === 0);
   };
 
-  const availableQuestions = getFilteredAvailableQuestions();
-
   const NewHotQuestion = () => {
-    let nextHotQuestion = shuffledQuestions.find(
+    const nextHotQuestion = shuffledQuestions.find(
       (q) => q.hot === 0 && q.guessed === 0
     );
 
@@ -268,7 +263,6 @@ const QuestionManager: React.FC<{
 
       {isQuizFinished && (
         <FinalScore
-          totalQuestions={allQuestions.length}
           guessedCount={getFilteredGuessedQuestions().length}
           incorrectCount={getTotalErrorCount()}
         />
