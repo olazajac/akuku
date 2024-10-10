@@ -12,7 +12,7 @@ const Progress: React.FC<ProgressProps> = ({
   guessedCount,
   incorrectCount,
 }) => {
-  const totalAnswered = guessedCount + incorrectCount;
+  const totalAnswered = guessedCount;
   const progressPercentage = (totalAnswered / totalQuestions) * 100;
   const questionsLeft = totalQuestions - totalAnswered;
 

@@ -1,207 +1,278 @@
-"use client";
-
 import React, { useState, useEffect, useRef } from "react";
-import QuestionCard from "./QuestionCard";
-import FinalScore from "./FinalScore";
-import Progress from "./Progress";
+import QuestionCard from "./QuestionCard"; // Assuming this is implemented correctly
+import FinalScore from "./FinalScore"; // Assuming this is implemented correctly
+import Progress from "./Progress"; // Assuming this is implemented correctly
 
-// Define the structure of a question
 type Question = {
-  pytanie: string;
-  odpowiedz: string;
+  pytanie: string; // The question text
+  odpowiedz: string; // The correct answer
+  hot: number; // Hot status
+  guessed: number; // Guessed status
+  errors: number; // Error count
+  index: number; // Unique index
 };
 
-const QuestionManager: React.FC<{ questions: Question[] }> = ({
-  questions,
-}) => {
-  const [inactiveQuestions, setInactiveQuestions] = useState<Question[]>([]);
-  const [activeQuestions, setActiveQuestions] = useState<Question[]>([]);
-  const [guessedQuestions, setGuessedQuestions] = useState<Question[]>([]);
-  const [incorrectQuestions, setIncorrectQuestions] = useState<Question[]>([]);
-  const [incorrectCounts, setIncorrectCounts] = useState<{
-    [key: string]: number;
-  }>({});
+const QuestionManager: React.FC<{
+  questions: { pytanie: string; odpowiedz: string }[];
+}> = ({ questions }) => {
+  const [allQuestions, setAllQuestions] = useState<Question[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
+  const [previousQuestion, setPreviousQuestion] = useState<Question | null>(
+    null
+  ); // Track previous question
   const [userAnswer, setUserAnswer] = useState<string>("");
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [lastAskedQuestion, setLastAskedQuestion] = useState<Question | null>(
-    null
-  );
-  const [noRepeat, setNoRepeat] = useState<boolean>(false);
-
-  // Create a ref for the input element
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const [isRepeatChecked, setIsRepeatChecked] = useState<boolean>(false);
+  const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
 
-  // Initialize inactiveQuestions with all questions at the start
   useEffect(() => {
-    const initialInactiveQuestions = [...questions];
-    const initialActiveQuestions = getRandomQuestions(
-      initialInactiveQuestions,
-      4
-    );
-    setInactiveQuestions(
-      initialInactiveQuestions.filter(
-        (q) => !initialActiveQuestions.includes(q)
-      )
-    );
-    setActiveQuestions(initialActiveQuestions);
-    setCurrentQuestion(initialActiveQuestions[0]);
-  }, [questions]);
+    // Initialize questions
+    const initializedQuestions = questions.map((q, index) => ({
+      pytanie: q.pytanie,
+      odpowiedz: q.odpowiedz,
+      hot: 0, // Changed from active to hot
+      guessed: 0,
+      errors: 0,
+      index: index,
+    }));
 
-  // Focus the input after the component mounts
-  useEffect(() => {
+    setAllQuestions(initializedQuestions);
+
+    // Shuffle questions
+    const shuffled = shuffleArray(initializedQuestions);
+    setShuffledQuestions(shuffled);
+
+    // Set the first 4 questions as hot
+    const initialHotQuestions = shuffled.slice(0, 4);
+    setShuffledQuestions((prev) =>
+      prev.map((q) => (initialHotQuestions.includes(q) ? { ...q, hot: 1 } : q))
+    );
+
+    // Set the current question to the first hot question
+    setCurrentQuestion(initialHotQuestions[0]);
+    setPreviousQuestion(null); // Initialize previous question as null
+
+    // Focus the input after loading
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  }, [currentQuestion]);
+  }, [questions]);
 
-  // Function to get random questions from a pool
-  const getRandomQuestions = (
-    questionPool: Question[],
-    count: number
-  ): Question[] => {
-    const shuffled = questionPool.sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, Math.min(count, questionPool.length));
+  const shuffleArray = (array: Question[]): Question[] => {
+    return array.sort(() => Math.random() - 0.5);
   };
 
-  // Handle checking the answer
-  const handleCheckAnswer = () => {
-    if (!currentQuestion) return;
+  const getTotalErrorCount = () => {
+    return shuffledQuestions.reduce((sum, q) => sum + q.errors, 0);
+  };
 
+  const handleCheckAnswer = (
+    event?: React.KeyboardEvent | React.MouseEvent
+  ) => {
+    // Handle submission only on Enter key or button click
+    if (
+      event &&
+      event.type === "keydown" &&
+      (event as React.KeyboardEvent).key !== "Enter"
+    ) {
+      return;
+    }
+
+    if (!currentQuestion || userAnswer.trim() === "") return;
+
+    // Ensure correct answer is trimmed and lowercased
     const correctAnswer = currentQuestion.odpowiedz.trim().toLowerCase();
-    const isAnswerCorrect = userAnswer.trim().toLowerCase() === correctAnswer;
+    const userAnswerTrimmed = userAnswer.trim().toLowerCase();
+
+    // Check if the answer is correct
+    const isAnswerCorrect = userAnswerTrimmed === correctAnswer;
 
     if (isAnswerCorrect) {
       setIsCorrect(true);
-      setGuessedQuestions((prev) => [...prev, currentQuestion]);
-
-      const updatedActiveQuestions = activeQuestions.filter(
-        (q) => q.pytanie !== currentQuestion.pytanie
-      );
-
-      if (inactiveQuestions.length > 0) {
-        const newQuestion = getRandomQuestions(inactiveQuestions, 1)[0];
-        updatedActiveQuestions.push(newQuestion);
-        setInactiveQuestions((prev) => prev.filter((q) => q !== newQuestion));
-      }
-
-      setActiveQuestions(updatedActiveQuestions);
-
-      if (inactiveQuestions.length + updatedActiveQuestions.length <= 4) {
-        setActiveQuestions([...updatedActiveQuestions, ...inactiveQuestions]);
-        setInactiveQuestions([]);
-      }
+      // Move the question to guessed state
+      updateQuestionStatus(currentQuestion.index, { guessed: 1, hot: 0 }); // Changed from active to hot
+      // Reset user answer
+      setUserAnswer("");
+      NewHotQuestion(); // Changed from NewActiveQuestion to NewHotQuestion
     } else {
       setIsCorrect(false);
+      // Increment error count
+      updateQuestionStatus(currentQuestion.index, {
+        errors: currentQuestion.errors + 1,
+        // Mark current question as not hot
+      });
 
-      setIncorrectCounts((prev) => ({
-        ...prev,
-        [currentQuestion.pytanie]: (prev[currentQuestion.pytanie] || 0) + 1,
-      }));
+      if (isRepeatChecked) {
+        // If checkbox is checked, we consider it an error question
+        updateQuestionStatus(currentQuestion.index, {
+          hot: 0, // Mark current question as not hot
+        });
 
-      if (noRepeat) {
-        setIncorrectQuestions((prev) => [...prev, currentQuestion]);
-        setActiveQuestions((prev) =>
-          prev.filter((q) => q.pytanie !== currentQuestion.pytanie)
-        );
-
-        if (inactiveQuestions.length > 0) {
-          const newQuestion = getRandomQuestions(inactiveQuestions, 1)[0];
-          setActiveQuestions((prev) => [...prev, newQuestion]);
-          setInactiveQuestions((prev) => prev.filter((q) => q !== newQuestion));
-        }
+        NewHotQuestion(); // Changed from NewActiveQuestion to NewHotQuestion
       }
     }
 
-    let nextQuestion;
-    do {
-      nextQuestion =
-        activeQuestions[Math.floor(Math.random() * activeQuestions.length)];
-    } while (nextQuestion === lastAskedQuestion && activeQuestions.length > 1);
-
-    setCurrentQuestion(nextQuestion);
-    setLastAskedQuestion(nextQuestion);
+    // Reset user answer
     setUserAnswer("");
 
+    // Clear input and refocus
     if (inputRef.current) {
-      inputRef.current.focus();
+      inputRef.current.focus(); // Focus the input after processing the answer
+    }
+
+    NewCurrentQuestion();
+  };
+
+  const updateQuestionStatus = (index: number, updates: Partial<Question>) => {
+    setShuffledQuestions((prev) =>
+      prev.map((q) => (q.index === index ? { ...q, ...updates } : q))
+    );
+  };
+
+  const getFilteredAvailableQuestions = () => {
+    // Filter based on hot status - we can get current question from these
+    return shuffledQuestions.filter((q) => q.hot === 1 && q.guessed === 0);
+  };
+
+  const availableQuestions = getFilteredAvailableQuestions();
+
+  const NewHotQuestion = () => {
+    let nextHotQuestion = shuffledQuestions.find(
+      (q) => q.hot === 0 && q.guessed === 0
+    );
+
+    // If we find a question, we mark it as hot.
+    if (nextHotQuestion) {
+      updateQuestionStatus(nextHotQuestion.index, { hot: 1 });
     }
   };
 
+  const NewCurrentQuestion = () => {
+    // Filter the available questions (hot and not guessed)
+    const availableQuestions = shuffledQuestions.filter(
+      (q) => q.hot === 1 && q.index !== currentQuestion?.index
+    );
+
+    // Randomly select one of the available questions
+    if (availableQuestions.length > 0) {
+      const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+      const nextQuestion = availableQuestions[randomIndex];
+
+      setCurrentQuestion(nextQuestion);
+    }
+  };
+
+  const getFilteredGuessedQuestions = () => {
+    return shuffledQuestions.filter((q) => q.guessed === 1);
+  };
+
+  const getFilteredErrorQuestions = () => {
+    return shuffledQuestions.filter((q) => q.errors > 0);
+  };
+
   const isQuizFinished =
-    activeQuestions.length === 0 && inactiveQuestions.length === 0;
+    allQuestions.length === getFilteredGuessedQuestions().length;
 
   return (
     <div className="flex flex-col items-center justify-center mb-6">
       <Progress
-        totalQuestions={questions.length}
-        guessedCount={guessedQuestions.length}
-        incorrectCount={Object.values(incorrectCounts).reduce(
-          (sum, count) => sum + count,
-          0
-        )}
+        totalQuestions={allQuestions.length}
+        guessedCount={getFilteredGuessedQuestions().length}
+        incorrectCount={getTotalErrorCount()} // Pass the sum of all errors
       />
 
-      {!isQuizFinished ? (
-        <>
-          {currentQuestion && (
-            <QuestionCard
-              question={currentQuestion.pytanie}
-              userAnswer={userAnswer}
-              setUserAnswer={setUserAnswer}
-              onCheckAnswer={handleCheckAnswer}
-              inputRef={inputRef}
-            />
-          )}
-          {isCorrect !== null && (
-            <p
-              className={`mt-2 ${
-                isCorrect ? "text-green-300" : "text-red-300"
-              }`}
-            >
-              {isCorrect ? "Correct!" : "Incorrect. Try again!"}
-            </p>
-          )}
-          <label className="mt-4">
-            <input
-              type="checkbox"
-              checked={noRepeat}
-              onChange={() => setNoRepeat((prev) => !prev)}
-              className="mr-2"
-            />
-            No Repeat
-          </label>
-        </>
-      ) : (
-        <FinalScore
-          correctCount={guessedQuestions.length}
-          totalCount={questions.length}
+      {!isQuizFinished && currentQuestion && (
+        <QuestionCard
+          question={currentQuestion.pytanie}
+          userAnswer={userAnswer}
+          setUserAnswer={setUserAnswer}
+          onCheckAnswer={handleCheckAnswer}
+          inputRef={inputRef}
+          isCorrect={isCorrect}
         />
       )}
 
-      <ul className="mt-4">
-        {questions.map((q, index) => (
-          <li
-            key={index}
-            className={`p-2 ${
-              guessedQuestions.includes(q)
-                ? "bg-green-300"
-                : incorrectQuestions.includes(q)
-                ? "bg-red-300"
-                : activeQuestions.includes(q)
-                ? "border border-blue-400"
-                : "bg-white"
-            }`}
-          >
-            {q.pytanie}
-            {incorrectCounts[q.pytanie] > 0 && (
-              <span className="text-red-500 ml-2">
-                (Wrong Attempts: {incorrectCounts[q.pytanie]})
-              </span>
-            )}
-          </li>
-        ))}
-      </ul>
+      {/* Display the lists of questions using filtered results */}
+      <div className="mt-4">
+        <h3>Hot Questions:</h3>
+        <ul className="flex flex-wrap mt-2 gap-4">
+          {shuffledQuestions
+            .filter((q) => q.hot === 1)
+            .map((q) => (
+              <li
+                key={q.index}
+                className="p-2 w-48 border border-blue-400 bg-white"
+              >
+                {q.pytanie}
+                <div className="text-sm text-gray-600 mt-1">
+                  <p>Hot: {q.hot}</p>
+                  <p>Guessed: {q.guessed}</p>
+                  <p>Errors: {q.errors}</p>
+                  <p>ID: {q.index}</p>
+                </div>
+              </li>
+            ))}
+        </ul>
+
+        <h3>Guessed Questions:</h3>
+        <ul className="flex flex-wrap mt-2 gap-4">
+          {getFilteredGuessedQuestions().map((q) => (
+            <li key={q.index} className="p-2 w-48 bg-green-300">
+              {q.pytanie}
+              <div className="text-sm text-gray-600 mt-1">
+                <p>Hot: {q.hot}</p>
+                <p>Guessed: {q.guessed}</p>
+                <p>Errors: {q.errors}</p>
+                <p>ID: {q.index}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <h3>Error Questions:</h3>
+        <ul className="flex flex-wrap mt-2 gap-4">
+          {getFilteredErrorQuestions().map((q) => (
+            <li key={q.index} className="p-2 w-48 bg-red-300">
+              {q.pytanie}
+              <div className="text-sm text-gray-600 mt-1">
+                <p>Hot: {q.hot}</p>
+                <p>Guessed: {q.guessed}</p>
+                <p>Errors: {q.errors}</p>
+                <p>ID: {q.index}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <h3>Rest Questions:</h3>
+        <ul className="flex flex-wrap mt-2 gap-4">
+          {shuffledQuestions
+            .filter((q) => q.hot === 0 && q.guessed === 0)
+            .map((q) => (
+              <li
+                key={q.index}
+                className="p-2 w-48 border border-blue-200 bg-white"
+              >
+                {q.pytanie}
+                <div className="text-sm text-gray-600 mt-1">
+                  <p>Hot: {q.hot}</p>
+                  <p>Guessed: {q.guessed}</p>
+                  <p>Errors: {q.errors}</p>
+                  <p>ID: {q.index}</p>
+                </div>
+              </li>
+            ))}
+        </ul>
+      </div>
+
+      {isQuizFinished && (
+        <FinalScore
+          totalQuestions={allQuestions.length}
+          guessedCount={getFilteredGuessedQuestions().length}
+          incorrectCount={getTotalErrorCount()}
+        />
+      )}
     </div>
   );
 };
