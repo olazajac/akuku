@@ -8,7 +8,7 @@ interface FinalScoreProps {
 
 const FinalScore: React.FC<FinalScoreProps> = ({
   guessedCount,
-
+  totalQuestions,
   incorrectCount,
 }) => {
   return (
@@ -18,7 +18,7 @@ const FinalScore: React.FC<FinalScoreProps> = ({
         You answered {guessedCount} questions and made {incorrectCount} errors.
         Your score is:{" "}
         {((guessedCount * 100) / (incorrectCount + guessedCount)).toFixed(0)}
-        %.
+        %. Total unique questions: {totalQuestions}
       </p>
     </div>
   );

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import QuestionCard from "./QuestionCard"; // Assuming this is implemented correctly
 import FinalScore from "./FinalScore"; // Assuming this is implemented correctly
 import Progress from "./Progress"; // Assuming this is implemented correctly
+import Settings from "./Settings";
 
 type Question = {
   pytanie: string; // The question text
@@ -127,14 +128,11 @@ const QuestionManager: React.FC<{
     );
   };
 
-  const getFilteredAvailableQuestions = () => {
-    // Filter based on hot status - we can get current question from these
-    return shuffledQuestions.filter((q) => q.hot === 1 && q.guessed === 0);
-  };
-
   const NewHotQuestion = () => {
-    const nextHotQuestion = shuffledQuestions.find(
-      (q) => q.hot === 0 && q.guessed === 0
+    const nextHotQuestion = shuffledQuestions.find((q) =>
+      !isRepeatChecked
+        ? q.hot === 0 && q.guessed === 0
+        : q.hot === 0 && q.guessed === 0 && q.errors === 0
     );
 
     // If we find a question, we mark it as hot.
@@ -162,12 +160,21 @@ const QuestionManager: React.FC<{
     return shuffledQuestions.filter((q) => q.guessed === 1);
   };
 
+  const getFilteredHotQuestions = () => {
+    return shuffledQuestions.filter((q) => q.hot === 1);
+  };
+
   const getFilteredErrorQuestions = () => {
     return shuffledQuestions.filter((q) => q.errors > 0);
   };
 
   const isQuizFinished =
-    allQuestions.length === getFilteredGuessedQuestions().length;
+    allQuestions.length === getFilteredGuessedQuestions().length ||
+    (isRepeatChecked &&
+      getFilteredGuessedQuestions().length +
+        getFilteredErrorQuestions().length ===
+        allQuestions.length &&
+      getFilteredHotQuestions().length === 0);
 
   return (
     <div className="flex flex-col items-center justify-center mb-6">
@@ -261,10 +268,16 @@ const QuestionManager: React.FC<{
         </ul>
       </div>
 
+      <Settings
+        isRepeatChecked={isRepeatChecked}
+        setIsRepeatChecked={setIsRepeatChecked}
+      />
+
       {isQuizFinished && (
         <FinalScore
           guessedCount={getFilteredGuessedQuestions().length}
           incorrectCount={getTotalErrorCount()}
+          totalQuestions={allQuestions.length}
         />
       )}
     </div>
