@@ -12,11 +12,16 @@ const HomePage = () => {
   useEffect(() => {
     const loadPosts = async () => {
       try {
-        const fetchedPosts = await fetchPosts();
-        setPosts(fetchedPosts);
+        // Your fetch or async logic here
       } catch (error) {
         console.error("Failed to fetch posts", error);
-        setError(error);
+
+        // Ensure the error is cast to a type (e.g., Error)
+        if (error instanceof Error) {
+          setError(error.message); // Use `error.message` if `setError` expects a string
+        } else {
+          setError("An unknown error occurred"); // Handle non-error objects
+        }
       } finally {
         setLoading(false);
       }
