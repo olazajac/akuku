@@ -12,15 +12,11 @@ const HomePage = () => {
   useEffect(() => {
     const loadPosts = async () => {
       try {
-        const response = await fetch("https://akuku.club/wp-json/wp/v2/posts");
-        const data = await response.json();
-        setPosts(data); // Now using setPosts
+        const fetchedPosts = await fetchPosts();
+        setPosts(fetchedPosts);
       } catch (error) {
-        if (error instanceof Error) {
-          setError(error.message);
-        } else {
-          setError(String(error));
-        }
+        console.error("Failed to fetch posts", error);
+        setError(error);
       } finally {
         setLoading(false);
       }
