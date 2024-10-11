@@ -184,6 +184,11 @@ const QuestionManager: React.FC<{
         incorrectCount={getTotalErrorCount()} // Pass the sum of all errors
       />
 
+      <Settings
+        isRepeatChecked={isRepeatChecked}
+        setIsRepeatChecked={setIsRepeatChecked}
+      />
+
       {!isQuizFinished && currentQuestion && (
         <QuestionCard
           question={currentQuestion.pytanie}
@@ -267,11 +272,6 @@ const QuestionManager: React.FC<{
             ))}
         </ul>
       </div>
-
-      <Settings
-        isRepeatChecked={isRepeatChecked}
-        setIsRepeatChecked={setIsRepeatChecked}
-      />
 
       {isQuizFinished && (
         <FinalScore
