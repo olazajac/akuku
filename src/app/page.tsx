@@ -12,15 +12,14 @@ const HomePage = () => {
   useEffect(() => {
     const loadPosts = async () => {
       try {
-        // ...your fetch logic here
+        const response = await fetch("https://akuku.club/wp-json/wp/v2/posts");
+        const data = await response.json();
+        setPosts(data); // Now using setPosts
       } catch (error) {
-        console.error("Failed to fetch posts", error);
-
-        // Check if error is an instance of Error or cast it
         if (error instanceof Error) {
-          setError(error.message); // Use error.message for better readability
+          setError(error.message);
         } else {
-          setError(String(error)); // Convert unknown error to string if it's not an Error object
+          setError(String(error));
         }
       } finally {
         setLoading(false);
