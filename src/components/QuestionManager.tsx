@@ -3,6 +3,7 @@ import QuestionCard from "./QuestionCard"; // Assuming this is implemented corre
 import FinalScore from "./FinalScore"; // Assuming this is implemented correctly
 import Progress from "./Progress"; // Assuming this is implemented correctly
 import Settings from "./Settings";
+import axios from "axios";
 
 type Question = {
   pytanie: string; // The question text
@@ -65,6 +66,43 @@ const QuestionManager: React.FC<{
     return shuffledQuestions.reduce((sum, q) => sum + q.errors, 0);
   };
 
+  const speakAnswer = async (text: string) => {
+    const apiKey = "AIzaSyB1bktNK2YnF5VK0ARGlHIa3a_y7aVeJ70"; // Replace with your actual API Key
+
+    try {
+      const response = await axios.post(
+        `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`,
+        {
+          input: {
+            text: text, // The text to be converted to speech
+          },
+          voice: {
+            languageCode: "en-US", // Change to the desired language code
+            ssmlGender: "NEUTRAL", // Gender (can be MALE, FEMALE, or NEUTRAL)
+          },
+          audioConfig: {
+            audioEncoding: "MP3", // Audio format (MP3, LINEAR16, or OGG_OPUS)
+          },
+        },
+        {
+          headers: {
+            "Content-Type": "application/json", // Specify JSON format
+          },
+        }
+      );
+
+      const audioContent = response.data.audioContent;
+      const audio = new Audio(`data:audio/mp3;base64,${audioContent}`);
+      audio.play();
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Error in speakAnswer:", error.response?.data);
+      } else {
+        console.error("Unexpected error:", error);
+      }
+    }
+  };
+
   const handleCheckAnswer = (
     event?: React.KeyboardEvent | React.MouseEvent
   ) => {
@@ -85,6 +123,8 @@ const QuestionManager: React.FC<{
 
     // Check if the answer is correct
     const isAnswerCorrect = userAnswerTrimmed === correctAnswer;
+
+    speakAnswer(currentQuestion.odpowiedz);
 
     if (isAnswerCorrect) {
       setIsCorrect(true);
@@ -199,6 +239,11 @@ const QuestionManager: React.FC<{
           isCorrect={isCorrect}
         />
       )}
+
+      {/* Listen Button */}
+      <button onClick={() => speakAnswer(currentQuestion.odpowiedz)}>
+        Listen to Answer
+      </button>
 
       {/* Display the lists of questions using filtered results */}
       <div className="mt-4">
