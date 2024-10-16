@@ -4,6 +4,11 @@ import FinalScore from "./FinalScore"; // Assuming this is implemented correctly
 import Progress from "./Progress"; // Assuming this is implemented correctly
 import Settings from "./Settings";
 import axios from "axios";
+import ErrorCard from "./ErrorCard";
+import CorrectCard from "./CorrectCard";
+import IntroCard from "./IntroCard";
+import SwipeListener from "./SwipeListener"; // Import the swipe listener component
+import Timer from "./Timer"; // Import the Timer component
 
 type Question = {
   pytanie: string; // The question text
@@ -21,10 +26,48 @@ const QuestionManager: React.FC<{
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
 
   const [userAnswer, setUserAnswer] = useState<string>("");
+  const [status, setStatus] = useState<string>("intro");
+  const [mode, setMode] = useState<string>("");
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isRepeatChecked, setIsRepeatChecked] = useState<boolean>(false);
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
+  const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
+  const [totalTime, setTotalTime] = useState<number>(0); // Store total time taken
+  const [prevquestion, setPrevquestion] = useState<string>(" ");
+  const [hint, setHint] = useState<string>(" ");
+
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (status === "active" && mode === "learn" && !isQuizFinished) {
+        if (event.key === "ArrowRight") {
+          handleCheckAnswer(true);
+        }
+        if (event.key === "ArrowLeft") {
+          handleCheckAnswer(false);
+        }
+      }
+
+      if (event.ctrlKey && event.key === "m") {
+        console.log(
+          "sdfdsafdsafffffffffffffffffffffffffffffffffffffffffffffffffff"
+        );
+      }
+
+      if (status === "correct" || status === "error") {
+        setStatus("active");
+      }
+
+      // Remove the event listener after the first call
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [status]);
 
   useEffect(() => {
     // Initialize questions
@@ -51,12 +94,37 @@ const QuestionManager: React.FC<{
 
     // Set the current question to the first hot question
     setCurrentQuestion(initialHotQuestions[0]);
+    setPrevquestion(initialHotQuestions[0]);
 
     // Focus the input after loading
     if (inputRef.current) {
       inputRef.current.focus();
     }
   }, [questions]);
+
+  // Start timer when quiz begins
+  const startTimer = () => {
+    setIsTimerRunning(true);
+  };
+
+  // Stop timer when quiz finishes
+  const stopTimer = (time: number) => {
+    setIsTimerRunning(false);
+  };
+  const handleStopTimer = (time: number) => {
+    setTotalTime(time);
+  };
+
+  // Function to handle right swipe (e.g., load next question)
+  const handleRightSwipe = () => {
+    console.log("Right swipe detected");
+  };
+
+  // Function to handle left swipe (you can add other logic here)
+  const handleLeftSwipe = () => {
+    console.log("Left swipe detected");
+    // Implement logic for left swipe if needed
+  };
 
   const shuffleArray = (array: Question[]): Question[] => {
     return array.sort(() => Math.random() - 0.5);
@@ -103,60 +171,60 @@ const QuestionManager: React.FC<{
     }
   };
 
-  const handleCheckAnswer = (
-    event?: React.KeyboardEvent | React.MouseEvent
-  ) => {
-    // Handle submission only on Enter key or button click
-    if (
-      event &&
-      event.type === "keydown" &&
-      (event as React.KeyboardEvent).key !== "Enter"
-    ) {
-      return;
+  const correctStuff = () => {
+    speakAnswer(currentQuestion?.odpowiedz);
+    setIsCorrect(true);
+    setStatus("correct");
+    // Move the question to guessed state
+    updateQuestionStatus(currentQuestion.index, { guessed: 1, hot: 0 }); // Changed from active to hot
+    // Reset user answer
+    setUserAnswer("");
+    // Check if quiz is finished after marking the question as guessed
+
+    NewHotQuestion(); // Changed from NewActiveQuestion to NewHotQuestion
+  };
+
+  const inCorrectStuff = () => {
+    speakAnswer(currentQuestion?.odpowiedz);
+    setIsCorrect(false);
+    setStatus("error");
+    // Increment error count
+    updateQuestionStatus(currentQuestion.index, {
+      errors: currentQuestion.errors + 1,
+      // Mark current question as not hot
+    });
+
+    if (isRepeatChecked) {
+      // If checkbox is checked, we consider it an error question
+      updateQuestionStatus(currentQuestion.index, {
+        hot: 0, // Mark current question as not hot
+      });
+
+      // Check if quiz is finished after marking the question
+
+      NewHotQuestion(); // Changed from NewActiveQuestion to NewHotQuestion
+    }
+  };
+
+  const handleCheckAnswer = (mark) => {
+    if (mode === "test") {
+      if (!currentQuestion || userAnswer.trim() === "") return;
     }
 
-    if (!currentQuestion || userAnswer.trim() === "") return;
+    // speakAnswer(currentQuestion.odpowiedz);
 
     // Ensure correct answer is trimmed and lowercased
     const correctAnswer = currentQuestion.odpowiedz.trim().toLowerCase();
     const userAnswerTrimmed = userAnswer.trim().toLowerCase();
 
     // Check if the answer is correct
-    const isAnswerCorrect = userAnswerTrimmed === correctAnswer;
-
-    speakAnswer(currentQuestion.odpowiedz);
+    const isAnswerCorrect =
+      mode === "test" ? userAnswerTrimmed === correctAnswer : mark;
 
     if (isAnswerCorrect) {
-      setIsCorrect(true);
-      // Move the question to guessed state
-      updateQuestionStatus(currentQuestion.index, { guessed: 1, hot: 0 }); // Changed from active to hot
-      // Reset user answer
-      setUserAnswer("");
-      NewHotQuestion(); // Changed from NewActiveQuestion to NewHotQuestion
+      correctStuff();
     } else {
-      setIsCorrect(false);
-      // Increment error count
-      updateQuestionStatus(currentQuestion.index, {
-        errors: currentQuestion.errors + 1,
-        // Mark current question as not hot
-      });
-
-      if (isRepeatChecked) {
-        // If checkbox is checked, we consider it an error question
-        updateQuestionStatus(currentQuestion.index, {
-          hot: 0, // Mark current question as not hot
-        });
-
-        NewHotQuestion(); // Changed from NewActiveQuestion to NewHotQuestion
-      }
-    }
-
-    // Reset user answer
-    setUserAnswer("");
-
-    // Clear input and refocus
-    if (inputRef.current) {
-      inputRef.current.focus(); // Focus the input after processing the answer
+      inCorrectStuff();
     }
 
     NewCurrentQuestion();
@@ -182,6 +250,7 @@ const QuestionManager: React.FC<{
   };
 
   const NewCurrentQuestion = () => {
+    setPrevquestion(currentQuestion?.odpowiedz);
     // Filter the available questions (hot and not guessed)
     const availableQuestions = shuffledQuestions.filter(
       (q) => q.hot === 1 && q.index !== currentQuestion?.index
@@ -193,7 +262,15 @@ const QuestionManager: React.FC<{
       const nextQuestion = availableQuestions[randomIndex];
 
       setCurrentQuestion(nextQuestion);
+      console.log("-----------------" + nextQuestion.odpowiedz);
+    } else {
+      stopTimer(totalTime); // Stop the timer
     }
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+
+    setUserAnswer("");
   };
 
   const getFilteredGuessedQuestions = () => {
@@ -216,8 +293,25 @@ const QuestionManager: React.FC<{
         allQuestions.length &&
       getFilteredHotQuestions().length === 0);
 
+  // Modify the function to handle the status change when quiz starts
+  const handleStatusChange = (newStatus: string) => {
+    setStatus(newStatus);
+    if (newStatus === "active") {
+      startTimer(); // Start the timer when status changes to active
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center mb-6">
+      {/* Timer Component */}
+      <Timer isRunning={isTimerRunning} onStop={handleStopTimer} />
+
+      <SwipeListener
+        onSwipeRight={handleRightSwipe}
+        onSwipeLeft={handleLeftSwipe} // Optional, only if you need left swipe handling
+      />
+
+      <p>{userAnswer}</p>
       <Progress
         totalQuestions={allQuestions.length}
         guessedCount={getFilteredGuessedQuestions().length}
@@ -229,21 +323,57 @@ const QuestionManager: React.FC<{
         setIsRepeatChecked={setIsRepeatChecked}
       />
 
-      {!isQuizFinished && currentQuestion && (
+      {status === "intro" && (
+        <IntroCard
+          mode={mode}
+          setMode={setMode}
+          status={status}
+          setStatus={handleStatusChange} // Updated this line
+        />
+      )}
+
+      {status === "correct" && (
+        <CorrectCard
+          question={currentQuestion.pytanie}
+          correctAnswer={currentQuestion.odpowiedz}
+          userAnswer={userAnswer}
+          setUserAnswer={setUserAnswer}
+          isCorrect={isCorrect}
+          setStatus={setStatus}
+          inputRef={inputRef}
+          prevquestion={prevquestion}
+          status={status}
+          speakAnswer={speakAnswer}
+        />
+      )}
+      {status === "error" && (
+        <ErrorCard
+          correctAnswer={currentQuestion.odpowiedz}
+          userAnswer={userAnswer}
+          setUserAnswer={setUserAnswer}
+          setStatus={setStatus}
+          prevquestion={prevquestion}
+          status={status}
+          speakAnswer={speakAnswer}
+        />
+      )}
+
+      {!isQuizFinished && currentQuestion && status === "active" && (
         <QuestionCard
+          correctAnswer={currentQuestion.odpowiedz}
           question={currentQuestion.pytanie}
           userAnswer={userAnswer}
           setUserAnswer={setUserAnswer}
           onCheckAnswer={handleCheckAnswer}
           inputRef={inputRef}
-          isCorrect={isCorrect}
+          status={status}
+          mode={mode}
+          NewCurrentQuestion={NewCurrentQuestion}
+          correctStuff={correctStuff}
+          inCorrectStuff={inCorrectStuff}
+          speakAnswer={speakAnswer}
         />
       )}
-
-      {/* Listen Button */}
-      <button onClick={() => speakAnswer(currentQuestion.odpowiedz)}>
-        Listen to Answer
-      </button>
 
       {/* Display the lists of questions using filtered results */}
       <div className="mt-4">
@@ -323,6 +453,8 @@ const QuestionManager: React.FC<{
           guessedCount={getFilteredGuessedQuestions().length}
           incorrectCount={getTotalErrorCount()}
           totalQuestions={allQuestions.length}
+          stopTimer={stopTimer}
+          totalTime={totalTime} // Pass the total time taken to FinalScore
         />
       )}
     </div>
