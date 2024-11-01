@@ -1,4 +1,3 @@
-// src/app/post/[id]/page.tsx
 "use client"; // Mark this component as a client component
 
 import React, { useEffect, useState } from "react";
@@ -18,7 +17,9 @@ const SinglePost = () => {
   useEffect(() => {
     const loadPost = async () => {
       try {
-        const fetchedPost = await fetchSinglePost(id);
+        // Ensure id is treated as a string
+        const postId = Array.isArray(id) ? id[0] : id; // Take the first element if it's an array
+        const fetchedPost = await fetchSinglePost(postId);
         setPost(fetchedPost);
       } catch (error) {
         console.error("Failed to fetch post", error);
