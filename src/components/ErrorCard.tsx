@@ -1,23 +1,17 @@
 import React, { useEffect } from "react";
 
 interface ErrorCardProps {
-  correctAnswer: string;
   userAnswer: string;
   setStatus: string;
   setUserAnswer: string;
   prevquestion: any;
-  status: string;
-  setUserAnswer: string;
   speakAnswer: string;
 }
 
 const ErrorCard: React.FC<ErrorCardProps> = ({
-  correctAnswer,
   userAnswer,
   setStatus,
   prevquestion,
-  status,
-  setUserAnswer,
   speakAnswer,
 }) => {
   return (

@@ -35,8 +35,7 @@ const QuestionManager: React.FC<{
   const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
   const [totalTime, setTotalTime] = useState<number>(0); // Store total time taken
   const [prevquestion, setPrevquestion] = useState<string>(" ");
-  const [hint, setHint] = useState<string>(" ");
-
+  
   useEffect(() => {
     const handleKeyPress = (event) => {
       if (status === "active" && mode === "learn" && !isQuizFinished) {

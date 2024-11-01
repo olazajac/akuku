@@ -9,8 +9,7 @@ interface QuestionCardProps {
   isCorrect: boolean | null;
   status: string;
   mode: string;
-  correctAnswer: string;
-  NewCurrentQuestion: string;
+
 }
 
 const QuestionCard: React.FC<QuestionCardProps> = ({
@@ -21,8 +20,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   inputRef,
   status,
   mode,
-  correctAnswer,
-  NewCurrentQuestion,
+
 }) => {
   useEffect(() => {
     // Focus the input after loading

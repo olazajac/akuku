@@ -2,15 +2,11 @@ import React, { useEffect } from "react";
 
 interface CorrectCardProps {
   correctAnswer: string;
-  userAnswer: string;
   setStatus: string;
-  inputRef: React.RefObject<HTMLInputElement>;
 }
 
 const correctAnswer: React.FC<CorrectCardProps> = ({
   correctAnswer,
-  userAnswer,
-  inputRef,
   setStatus,
 }) => {
   // Key press event listener to move to next question in error state

@@ -5,18 +5,14 @@ interface CorrectCardProps {
   setStatus: string;
   inputRef: React.RefObject<HTMLInputElement>;
   prevquestion: any;
-  status: string;
-  setUseranswer: string;
-  speakAnswer: string;
+
 }
 
 const CorrectCard: React.FC<CorrectCardProps> = ({
   correctAnswer,
   setStatus,
   prevquestion,
-  status,
-  setUseranswer,
-  speakAnswer,
+
 }) => {
   return (
     <div
