@@ -7,7 +7,7 @@ import { fetchPosts } from "../lib/api"; // Make sure the path and function name
 const HomePage = () => {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     const loadPosts = async () => {
@@ -16,14 +16,16 @@ const HomePage = () => {
         setPosts(fetchedPosts);
       } catch (error) {
         console.error("Failed to fetch posts", error);
-        setError(error);
+        // Safely assign error to `setError` if it’s an `Error` type
+        setError(error instanceof Error ? error : new Error("An unknown error occurred"));
       } finally {
         setLoading(false);
       }
     };
-
+  
     loadPosts();
   }, []);
+  
 
   if (loading) return <div className="text-center text-lg">Loading...</div>;
   if (error)
