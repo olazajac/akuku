@@ -3,7 +3,6 @@
 interface ErrorCardProps {
   userAnswer: string;
   setStatus: (status: string) => void;
-  setUserAnswer: string;
   prevquestion: any;
   speakAnswer: string;
 }

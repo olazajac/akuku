@@ -213,7 +213,7 @@ const QuestionManager: React.FC<{
     // speakAnswer(currentQuestion.odpowiedz);
 
     // Ensure correct answer is trimmed and lowercased
-    const correctAnswer = currentQuestion.odpowiedz.trim().toLowerCase();
+    const correctAnswer = currentQuestion?.odpowiedz.trim().toLowerCase();
     const userAnswerTrimmed = userAnswer.trim().toLowerCase();
 
     // Check if the answer is correct
