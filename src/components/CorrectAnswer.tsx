@@ -5,13 +5,13 @@ interface CorrectCardProps {
   setStatus: (status: string) => void;
 }
 
-const correctAnswer: React.FC<CorrectCardProps> = ({
+const CorrectAnswer: React.FC<CorrectCardProps> = ({
   correctAnswer,
   setStatus,
 }) => {
   // Key press event listener to move to next question in error state
   useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
+    const handleKeyPress = () => {
       setStatus("active");
     };
 
@@ -20,7 +20,7 @@ const correctAnswer: React.FC<CorrectCardProps> = ({
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
-  }, []);
+  }, [setStatus]);
 
   return (
     <div className="mb-4 p-4 border rounded-md shadow-md bg-red-100">
@@ -28,10 +28,9 @@ const correctAnswer: React.FC<CorrectCardProps> = ({
       <p className="mt-2 text-lg">
         <strong>Correct Answer:</strong> {correctAnswer}
       </p>
-
       <p className="mt-2">Press any key to continue to the next question.</p>
     </div>
   );
 };
 
-export default correctAnswer;
+export default CorrectAnswer;
