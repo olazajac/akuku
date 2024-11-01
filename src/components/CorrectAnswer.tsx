@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 interface CorrectCardProps {
   correctAnswer: string;
-  setStatus: string;
+  setStatus: (status: string) => void;
 }
 
 const correctAnswer: React.FC<CorrectCardProps> = ({

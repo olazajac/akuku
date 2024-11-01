@@ -1,15 +1,15 @@
 
 
 interface CorrectCardProps {
-  correctAnswer: string;
-  setStatus: string;
+  
+  setStatus: (status: string) => void;
   inputRef: React.RefObject<HTMLInputElement>;
   prevquestion: any;
 
 }
 
 const CorrectCard: React.FC<CorrectCardProps> = ({
-  correctAnswer,
+  
   setStatus,
   prevquestion,
 
