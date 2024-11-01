@@ -4,43 +4,44 @@ import { useState } from "react";
 
 const CreateTestPage = () => {
   const [title, setTitle] = useState(""); // Title of the post
-  const [fields, setFields] = useState([{ pytanie: "", odpowiedz: "" }]); // ACF Repeater for questions and answers
+  const [fields, setFields] = useState<{ pytanie: string; odpowiedz: string }[]>([]); // Questions and answers
+  const [bulkInput, setBulkInput] = useState(""); // For pasting questions and answers in bulk
   const [jezykPytania, setJezykPytania] = useState("polski"); // Language of the questions
   const [jezykOdpowiedzi, setJezykOdpowiedzi] = useState("polski"); // Language of the answers
 
-  // Function to add a new question-answer pair
-  const handleAddField = () => {
-    setFields([...fields, { pytanie: "", odpowiedz: "" }]);
+  // Function to handle bulk input parsing
+  const handleBulkInput = () => {
+    const parsedFields = bulkInput
+      .split("\n") // Split each line
+      .map((line) => {
+        // Split by tab if present; fallback to comma if no tabs found
+        const [pytanie, odpowiedz] = line.includes("\t")
+          ? line.split("\t")
+          : line.split(","); // Fallback to comma
+  
+        return {
+          pytanie: pytanie?.trim() || "",
+          odpowiedz: odpowiedz?.trim() || "",
+        };
+      })
+      .filter((field) => field.pytanie && field.odpowiedz); // Ensure both question and answer are present
+  
+    setFields(parsedFields); // Set parsed fields
+    setBulkInput(""); // Clear the bulk input field
   };
-
-  // Function to handle the input changes for each question-answer pair
-  const handleFieldChange = (
-    index: number,
-    event: React.ChangeEvent<HTMLInputElement>,
-    field: "pytanie" | "odpowiedz"
-  ) => {
-    const newFields = [...fields];
-    newFields[index][field] = event.target.value;
-    setFields(newFields);
-  };
-
-  // Function to remove a question-answer pair
-  const handleRemoveField = (index: number) => {
-    const newFields = fields.filter((_, i) => i !== index);
-    setFields(newFields);
-  };
+  
 
   // Function to handle form submission and create a new post
   const handleSubmit = async () => {
     const postData = {
-      title, // Title of the post
-      content: "", // You can add additional content if needed
-      status: "publish", // Publish status
-      type: "test", // Custom post type 'test'
+      title,
+      content: "",
+      status: "publish",
+      type: "test",
       acf: {
-        test: fields, // ACF Repeater for questions and answers
-        "jezyk-pytanie": jezykPytania, // Language of the questions
-        "jezyk-odpowiedzi": jezykOdpowiedzi, // Language of the answers
+        test: fields,
+        "jezyk-pytanie": jezykPytania,
+        "jezyk-odpowiedzi": jezykOdpowiedzi,
       },
     };
 
@@ -60,7 +61,6 @@ const CreateTestPage = () => {
 
       const result = await response.json();
       console.log("Post created successfully:", result);
-      // Optionally reset form fields or redirect after successful submission
     } catch (error) {
       console.error("Failed to create post:", error);
     }
@@ -82,54 +82,38 @@ const CreateTestPage = () => {
         />
       </div>
 
-      {/* Repeater Fields for Questions and Answers */}
+      {/* Bulk Input for Questions and Answers */}
+      <div className="mb-6">
+        <label className="block text-gray-700 font-medium mb-2">
+          Paste Questions and Answers:
+        </label>
+        <textarea
+          value={bulkInput}
+          onChange={(e) => setBulkInput(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+          placeholder="Paste questions and answers separated by a tab or comma (e.g., Question1\tAnswer1)"
+          rows={6}
+        />
+        <button
+          onClick={handleBulkInput}
+          className="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
+        >
+          Add Questions
+        </button>
+      </div>
+
+      {/* Display parsed questions and answers */}
       <h2 className="text-xl font-semibold mb-4">Questions and Answers</h2>
-      <button
-        onClick={handleAddField}
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 mb-6"
-      >
-        Add More Questions
-      </button>
       {fields.map((field, index) => (
-        <div key={index} className="mb-6 flex items-center gap-4">
-          <div className="flex-1">
-            <label className="block text-gray-700 font-medium mb-1">
-              Question {index + 1}:
-            </label>
-            <input
-              type="text"
-              value={field.pytanie}
-              onChange={(e) => handleFieldChange(index, e, "pytanie")}
-              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-              placeholder={`Enter question ${index + 1}`}
-            />
-          </div>
-          <div className="flex-1">
-            <label className="block text-gray-700 font-medium mb-1">
-              Answer {index + 1}:
-            </label>
-            <input
-              type="text"
-              value={field.odpowiedz}
-              onChange={(e) => handleFieldChange(index, e, "odpowiedz")}
-              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
-              placeholder={`Enter answer ${index + 1}`}
-            />
-          </div>
-          <button
-            onClick={() => handleRemoveField(index)}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300"
-          >
-            Remove
-          </button>
+        <div key={index} className="mb-2">
+          <p>
+            <strong>Q{index + 1}:</strong> {field.pytanie}
+          </p>
+          <p>
+            <strong>A:</strong> {field.odpowiedz}
+          </p>
         </div>
       ))}
-      <button
-        onClick={handleAddField}
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 mb-6"
-      >
-        Add More Questions
-      </button>
 
       {/* Radio Buttons for Language Selection */}
       <div className="mt-8">
@@ -138,7 +122,7 @@ const CreateTestPage = () => {
         {/* Language of Questions */}
         <div className="mb-4">
           <label className="block text-gray-700 font-medium mb-2">
-            Language of Questions:dsfdsf
+            Language of Questions:
           </label>
           <div className="flex items-center gap-4">
             <label className="flex items-center">

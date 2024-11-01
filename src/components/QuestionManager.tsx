@@ -333,8 +333,8 @@ const QuestionManager: React.FC<{
 
       {status === "correct" && (
         <CorrectCard
-          question={currentQuestion.pytanie}
-          correctAnswer={currentQuestion.odpowiedz}
+          question={currentQuestion?.pytanie}
+          correctAnswer={currentQuestion?.odpowiedz}
           userAnswer={userAnswer}
           setUserAnswer={setUserAnswer}
           isCorrect={isCorrect}
@@ -347,7 +347,7 @@ const QuestionManager: React.FC<{
       )}
       {status === "error" && (
         <ErrorCard
-          correctAnswer={currentQuestion.odpowiedz}
+          correctAnswer={currentQuestion?.odpowiedz}
           userAnswer={userAnswer}
           setUserAnswer={setUserAnswer}
           setStatus={setStatus}
