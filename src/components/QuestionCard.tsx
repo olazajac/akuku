@@ -63,13 +63,13 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
       {mode === "learn" && (
         <>
           <button
-            onClick={() => onCheckAnswer(false)}
+            onClick={() => onCheckAnswer(null)}
             className="mt-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Nie Umiem
           </button>
           <button
-            onClick={() => onCheckAnswer(true)}
+            onClick={() => onCheckAnswer(1)}
             className="mt-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Umiem
