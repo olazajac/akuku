@@ -4,7 +4,7 @@ interface QuestionCardProps {
   question: string;
   userAnswer: string;
   setUserAnswer: (answer: string) => void;
-  onCheckAnswer: (answerIndex: number) => void;
+  onCheckAnswer: (event?: React.MouseEvent | React.KeyboardEvent) => void;
   inputRef: React.RefObject<HTMLInputElement>;
   status: string;
   mode: string;
@@ -63,13 +63,13 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
       {mode === "learn" && (
         <>
           <button
-            onClick={() => onCheckAnswer(0)}
+            onClick={() => onCheckAnswer()}
             className="mt-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Nie Umiem
           </button>
           <button
-            onClick={() => onCheckAnswer(1)}
+            onClick={() => onCheckAnswer()}
             className="mt-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Umiem
