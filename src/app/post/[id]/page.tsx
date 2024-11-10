@@ -9,10 +9,10 @@ const SinglePost = () => {
   const { id } = useParams(); // Get post ID from dynamic route 
   const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [activeQuestions, setActiveQuestions] = useState<any[]>([]);
-  const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(
-    new Set()
-  );
+  // const [activeQuestions, setActiveQuestions] = useState<any[]>([]);
+  // const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(
+  //   new Set()
+  // );
 
   useEffect(() => {
     const loadPost = async () => {
@@ -31,15 +31,15 @@ const SinglePost = () => {
     loadPost();
   }, [id]);
 
-  useEffect(() => {
-    // Initialize active questions when post is loaded
-    if (post && post.acf && post.acf.test) {
-      const initialQuestions = post.acf.test
-        .sort(() => 0.5 - Math.random()) // Shuffle questions
-        .slice(0, 4); // Pick the first 4 random questions
-      setActiveQuestions(initialQuestions);
-    }
-  }, [post]);
+  // useEffect(() => {
+  //   // Initialize active questions when post is loaded
+  //   if (post && post.acf && post.acf.test) {
+  //     const initialQuestions = post.acf.test
+  //       .sort(() => 0.5 - Math.random()) // Shuffle questions
+  //       .slice(0, 4); // Pick the first 4 random questions
+  //     setActiveQuestions(initialQuestions);
+  //   }
+  // }, [post]);
 
   if (loading) return <div>Loading...</div>;
   if (!post) return <div>Post not found</div>;
@@ -51,24 +51,13 @@ const SinglePost = () => {
 
       <QuestionManager
   questions={post.acf.test}
-  setActiveQuestions={setActiveQuestions}
-  activeQuestions={activeQuestions}
-  answeredQuestions={answeredQuestions}
-  setAnsweredQuestions={setAnsweredQuestions}
+  // setActiveQuestions={setActiveQuestions}
+  // activeQuestions={activeQuestions}
+  // answeredQuestions={answeredQuestions}
+  // setAnsweredQuestions={setAnsweredQuestions}
 />
 
-      {/* <ul className="mt-4">
-        {post.acf.test.map((q, index) => (
-          <li
-            key={index}
-            className={`p-2 ${
-              answeredQuestions.has(q.pytanie) ? "bg-green-300" : "bg-white"
-            }`}
-          >
-            {q.pytanie}
-          </li>
-        ))}
-      </ul> */}
+  
     </div>
   );
 };
