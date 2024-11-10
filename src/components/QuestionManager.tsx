@@ -38,7 +38,7 @@ const QuestionManager: React.FC<{
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
   const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
   const [totalTime, setTotalTime] = useState<number>(0); // Store total time taken
-  const [prevquestion, setPrevquestion] =  useState<Question | null>(null);
+  const [prevquestion, setPrevquestion] =  useState<string | null>(null);
   
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -267,7 +267,7 @@ const QuestionManager: React.FC<{
   };
 
   const NewCurrentQuestion = () => {
-    setPrevquestion(currentQuestion?.odpowiedz);
+    setPrevquestion(currentQuestion?.odpowiedz ?? null);
     // Filter the available questions (hot and not guessed)
     const availableQuestions = shuffledQuestions.filter(
       (q) => q.hot === 1 && q.index !== currentQuestion?.index
