@@ -38,7 +38,7 @@ const QuestionManager: React.FC<{
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
   const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
   const [totalTime, setTotalTime] = useState<number>(0); // Store total time taken
-  const [prevquestion, setPrevquestion] = useState<string>(" ");
+  const [prevquestion, setPrevquestion] =  useState<Question | null>(null);
   
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
