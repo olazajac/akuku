@@ -41,7 +41,7 @@ const QuestionManager: React.FC<{
   const [prevquestion, setPrevquestion] = useState<string>(" ");
   
   useEffect(() => {
-    const handleKeyPress = (event) => {
+    const handleKeyPress = (event: KeyboardEvent) => {
       if (status === "active" && mode === "learn" && !isQuizFinished) {
         if (event.key === "ArrowRight") {
           handleCheckAnswer(true);
