@@ -38,7 +38,7 @@ const QuestionManager: React.FC<{
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
   const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
   const [totalTime, setTotalTime] = useState<number>(0); // Store total time taken
-  const [prevquestion, setPrevquestion] =  useState<string | null>(null);
+  const [prevquestion, setPrevquestion] =   useState<string | null>(null);
   
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -97,7 +97,7 @@ const QuestionManager: React.FC<{
 
     // Set the current question to the first hot question
     setCurrentQuestion(initialHotQuestions[0]);
-    setPrevquestion(initialHotQuestions[0]);
+    setPrevquestion(initialHotQuestions[0]?.odpowiedz ?? null);
 
     // Focus the input after loading
     if (inputRef.current) {
