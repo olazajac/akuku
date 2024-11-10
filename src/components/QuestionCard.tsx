@@ -63,7 +63,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
       {mode === "learn" && (
         <>
           <button
-            onClick={() => onCheckAnswer(null)}
+            onClick={() => onCheckAnswer(0)}
             className="mt-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Nie Umiem
