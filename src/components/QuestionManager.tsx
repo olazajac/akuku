@@ -218,6 +218,7 @@ const QuestionManager: React.FC<{
   };
 
   const handleCheckAnswer = (mark) => {
+    if (currentQuestion) {
     if (mode === "test") {
       if (!currentQuestion || userAnswer.trim() === "") return;
     }
@@ -232,6 +233,8 @@ const QuestionManager: React.FC<{
     const isAnswerCorrect =
       mode === "test" ? userAnswerTrimmed === correctAnswer : mark;
 
+    
+
     if (isAnswerCorrect) {
       correctStuff();
     } else {
@@ -239,6 +242,7 @@ const QuestionManager: React.FC<{
     }
 
     NewCurrentQuestion();
+  }
   };
 
   const updateQuestionStatus = (index: number, updates: Partial<Question>) => {
