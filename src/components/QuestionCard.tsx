@@ -4,7 +4,7 @@ interface QuestionCardProps {
   question: string;
   userAnswer: string;
   setUserAnswer: (answer: string) => void;
-  onCheckAnswer: (event?: React.MouseEvent | React.KeyboardEvent) => void;
+  onCheckAnswer: (answerIndex: number) => void;
   inputRef: React.RefObject<HTMLInputElement>;
   status: string;
   mode: string;
