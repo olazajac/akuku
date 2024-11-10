@@ -175,9 +175,13 @@ const QuestionManager: React.FC<{
   };
 
   const correctStuff = () => {
+
+    if (currentQuestion) {
     speakAnswer(currentQuestion.odpowiedz);
     
     setStatus("correct");
+  }
+
     // Move the question to guessed state
     updateQuestionStatus(currentQuestion.index, { guessed: 1, hot: 0 }); // Changed from active to hot
     // Reset user answer
@@ -188,9 +192,13 @@ const QuestionManager: React.FC<{
   };
 
   const inCorrectStuff = () => {
-    speakAnswer(currentQuestion?.odpowiedz);
+
+    if (currentQuestion) {
+    speakAnswer(currentQuestion.odpowiedz);
     
     setStatus("error");
+
+    }
     // Increment error count
     updateQuestionStatus(currentQuestion.index, {
       errors: currentQuestion.errors + 1,
