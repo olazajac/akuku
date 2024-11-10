@@ -6,7 +6,7 @@ import { fetchSinglePost } from "../../../lib/api";
 import QuestionManager from "../../../components/QuestionManager";
 
 const SinglePost = () => {
-  const { id } = useParams(); // Get post ID from dynamic route
+  const { id } = useParams(); // Get post ID from dynamic route 
   const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeQuestions, setActiveQuestions] = useState<any[]>([]);
