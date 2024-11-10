@@ -4,7 +4,7 @@ interface ErrorCardProps {
   userAnswer: string;
   setStatus: (status: string) => void;
   prevquestion: any;
-  speakAnswer: string;
+  speakAnswer: (status: string) => void;
 }
 
 const ErrorCard: React.FC<ErrorCardProps> = ({
