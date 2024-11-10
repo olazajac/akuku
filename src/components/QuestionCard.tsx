@@ -27,7 +27,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
       setUserAnswer("");
       inputRef.current.focus();
     }
-  }, [status]);
+  }, [status, inputRef, setUserAnswer]);
 
   return (
     <div className="mb-4 p-4 border rounded-md shadow-md">
