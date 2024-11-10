@@ -3,7 +3,7 @@
 interface CorrectCardProps {
   
   setStatus: (status: string) => void;
-  inputRef: React.RefObject<HTMLInputElement>;
+  // inputRef: React.RefObject<HTMLInputElement>;
   prevquestion: any;
 
 }
