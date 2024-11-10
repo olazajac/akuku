@@ -52,7 +52,7 @@ const SwipeListener: React.FC<SwipeListenerProps> = ({
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [touchStartX, touchEndX]);
+  }, [touchStartX, touchEndX, handleTouchEnd]);
 
   return null; // This component doesn’t render anything
 };

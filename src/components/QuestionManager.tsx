@@ -28,7 +28,7 @@ const QuestionManager: React.FC<{
   const [userAnswer, setUserAnswer] = useState<string>("");
   const [status, setStatus] = useState<string>("intro");
   const [mode, setMode] = useState<string>("");
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isRepeatChecked, setIsRepeatChecked] = useState<boolean>(false);
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
@@ -172,7 +172,7 @@ const QuestionManager: React.FC<{
 
   const correctStuff = () => {
     speakAnswer(currentQuestion?.odpowiedz);
-    setIsCorrect(true);
+    
     setStatus("correct");
     // Move the question to guessed state
     updateQuestionStatus(currentQuestion.index, { guessed: 1, hot: 0 }); // Changed from active to hot
@@ -185,7 +185,7 @@ const QuestionManager: React.FC<{
 
   const inCorrectStuff = () => {
     speakAnswer(currentQuestion?.odpowiedz);
-    setIsCorrect(false);
+    
     setStatus("error");
     // Increment error count
     updateQuestionStatus(currentQuestion.index, {
