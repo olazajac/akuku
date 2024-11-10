@@ -219,7 +219,7 @@ const QuestionManager: React.FC<{
   }
   };
 
-  const handleCheckAnswer = (mark) => {
+  const handleCheckAnswer = (mark: boolean) => {
     if (currentQuestion) {
     if (mode === "test") {
       if (!currentQuestion || userAnswer.trim() === "") return;
