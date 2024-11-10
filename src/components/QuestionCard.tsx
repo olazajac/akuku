@@ -6,7 +6,6 @@ interface QuestionCardProps {
   setUserAnswer: (answer: string) => void;
   onCheckAnswer: (event?: React.MouseEvent | React.KeyboardEvent) => void;
   inputRef: React.RefObject<HTMLInputElement>;
-  isCorrect: boolean | null;
   status: string;
   mode: string;
 

@@ -326,40 +326,28 @@ const QuestionManager: React.FC<{
         <IntroCard
           mode={mode}
           setMode={setMode}
-          status={status}
           setStatus={handleStatusChange} // Updated this line
         />
       )}
 
       {status === "correct" && (
         <CorrectCard
-          question={currentQuestion?.pytanie}
-          correctAnswer={currentQuestion?.odpowiedz}
-          userAnswer={userAnswer}
-          setUserAnswer={setUserAnswer}
-          isCorrect={isCorrect}
-          setStatus={setStatus}
           inputRef={inputRef}
           prevquestion={prevquestion}
-          status={status}
-          speakAnswer={speakAnswer}
         />
       )}
       {status === "error" && (
         <ErrorCard
-          correctAnswer={currentQuestion?.odpowiedz}
           userAnswer={userAnswer}
-          setUserAnswer={setUserAnswer}
           setStatus={setStatus}
           prevquestion={prevquestion}
-          status={status}
           speakAnswer={speakAnswer}
         />
       )}
 
       {!isQuizFinished && currentQuestion && status === "active" && (
         <QuestionCard
-          correctAnswer={currentQuestion.odpowiedz}
+
           question={currentQuestion.pytanie}
           userAnswer={userAnswer}
           setUserAnswer={setUserAnswer}
@@ -367,10 +355,6 @@ const QuestionManager: React.FC<{
           inputRef={inputRef}
           status={status}
           mode={mode}
-          NewCurrentQuestion={NewCurrentQuestion}
-          correctStuff={correctStuff}
-          inCorrectStuff={inCorrectStuff}
-          speakAnswer={speakAnswer}
         />
       )}
 
@@ -452,7 +436,6 @@ const QuestionManager: React.FC<{
           guessedCount={getFilteredGuessedQuestions().length}
           incorrectCount={getTotalErrorCount()}
           totalQuestions={allQuestions.length}
-          stopTimer={stopTimer}
           totalTime={totalTime} // Pass the total time taken to FinalScore
         />
       )}
