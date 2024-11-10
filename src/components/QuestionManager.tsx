@@ -44,10 +44,10 @@ const QuestionManager: React.FC<{
     const handleKeyPress = (event: KeyboardEvent) => {
       if (status === "active" && mode === "learn" && !isQuizFinished) {
         if (event.key === "ArrowRight") {
-          handleCheckAnswer(true);
+          handleCheckAnswer();
         }
         if (event.key === "ArrowLeft") {
-          handleCheckAnswer(false);
+          handleCheckAnswer();
         }
       }
 
@@ -219,7 +219,7 @@ const QuestionManager: React.FC<{
   }
   };
 
-  const handleCheckAnswer = (mark: boolean) => {
+  const handleCheckAnswer = () => {
     if (currentQuestion) {
     if (mode === "test") {
       if (!currentQuestion || userAnswer.trim() === "") return;
@@ -232,8 +232,7 @@ const QuestionManager: React.FC<{
     const userAnswerTrimmed = userAnswer.trim().toLowerCase();
 
     // Check if the answer is correct
-    const isAnswerCorrect =
-      mode === "test" ? userAnswerTrimmed === correctAnswer : mark;
+    const isAnswerCorrect =  userAnswerTrimmed === correctAnswer ;
 
     
 
@@ -350,8 +349,9 @@ const QuestionManager: React.FC<{
 
       {status === "correct" && (
         <CorrectCard
-          inputRef={inputRef}
+          // inputRef={inputRef}
           prevquestion={prevquestion}
+          setStatus={handleStatusChange} // Updated this line
         />
       )}
       {status === "error" && (
