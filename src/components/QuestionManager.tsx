@@ -181,9 +181,10 @@ const QuestionManager: React.FC<{
     
     setStatus("correct");
   }
-
+  if (currentQuestion) {
     // Move the question to guessed state
     updateQuestionStatus(currentQuestion.index, { guessed: 1, hot: 0 }); // Changed from active to hot
+  }
     // Reset user answer
     setUserAnswer("");
     // Check if quiz is finished after marking the question as guessed
