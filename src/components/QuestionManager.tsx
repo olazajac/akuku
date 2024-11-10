@@ -111,7 +111,7 @@ const QuestionManager: React.FC<{
   };
 
   // Stop timer when quiz finishes
-  const stopTimer = (time: number) => {
+  const stopTimer = () => {
     setIsTimerRunning(false);
   };
   const handleStopTimer = (time: number) => {
@@ -281,7 +281,7 @@ const QuestionManager: React.FC<{
       setCurrentQuestion(nextQuestion);
       console.log("-----------------" + nextQuestion.odpowiedz);
     } else {
-      stopTimer(totalTime); // Stop the timer
+      stopTimer(); // Stop the timer
     }
     if (inputRef.current) {
       inputRef.current.focus();
