@@ -175,7 +175,7 @@ const QuestionManager: React.FC<{
   };
 
   const correctStuff = () => {
-    speakAnswer(currentQuestion?.odpowiedz);
+    speakAnswer(currentQuestion.odpowiedz);
     
     setStatus("correct");
     // Move the question to guessed state
