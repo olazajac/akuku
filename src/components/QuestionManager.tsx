@@ -19,13 +19,7 @@ type Question = {
   index: number; // Unique index
 };
 
-interface QuestionManagerProps {
-  questions: { pytanie: string; odpowiedz: string }[];
-  setActiveQuestions: Dispatch<SetStateAction<any[]>>;
-  activeQuestions: any[];
-  answeredQuestions: Set<string>;
-  setAnsweredQuestions: Dispatch<SetStateAction<Set<string>>>;
-}
+
 
 const QuestionManager: React.FC<{
   questions: { pytanie: string; odpowiedz: string }[];
