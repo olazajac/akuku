@@ -199,7 +199,7 @@ const QuestionManager: React.FC<{
     
     setStatus("error");
 
-    }
+    
     // Increment error count
     updateQuestionStatus(currentQuestion.index, {
       errors: currentQuestion.errors + 1,
@@ -216,6 +216,7 @@ const QuestionManager: React.FC<{
 
       NewHotQuestion(); // Changed from NewActiveQuestion to NewHotQuestion
     }
+  }
   };
 
   const handleCheckAnswer = (mark) => {
