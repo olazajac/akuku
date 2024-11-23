@@ -12,7 +12,7 @@ import Timer from "./Timer"; // Import the Timer component
 import Hint from "./Hint";
 import Stopper from "./Stopper";
 import ScoreTable from "./ScoreTable";
-import { log } from "console";
+
 
 type Question = {
   pytanie: string; // The question text
