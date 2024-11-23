@@ -9,10 +9,7 @@ const SinglePost = () => {
   const { id } = useParams(); // Get post ID from dynamic route 
   const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  // const [activeQuestions, setActiveQuestions] = useState<any[]>([]);
-  // const [answeredQuestions, setAnsweredQuestions] = useState<Set<string>>(
-  //   new Set()
-  // );
+  const [testId, setTestId] = useState<number>(0)
 
   useEffect(() => {
     const loadPost = async () => {
@@ -20,6 +17,7 @@ const SinglePost = () => {
         // Ensure id is treated as a string
         const postId = Array.isArray(id) ? id[0] : id; // Take the first element if it's an array
         const fetchedPost = await fetchSinglePost(postId);
+        setTestId(Number(postId))
         setPost(fetchedPost);
       } catch (error) {
         console.error("Failed to fetch post", error);
@@ -31,15 +29,6 @@ const SinglePost = () => {
     loadPost();
   }, [id]);
 
-  // useEffect(() => {
-  //   // Initialize active questions when post is loaded
-  //   if (post && post.acf && post.acf.test) {
-  //     const initialQuestions = post.acf.test
-  //       .sort(() => 0.5 - Math.random()) // Shuffle questions
-  //       .slice(0, 4); // Pick the first 4 random questions
-  //     setActiveQuestions(initialQuestions);
-  //   }
-  // }, [post]);
 
   if (loading) return <div>Loading...</div>;
   if (!post) return <div>Post not found</div>;
@@ -51,10 +40,8 @@ const SinglePost = () => {
 
       <QuestionManager
   questions={post.acf.test}
-  // setActiveQuestions={setActiveQuestions}
-  // activeQuestions={activeQuestions}
-  // answeredQuestions={answeredQuestions}
-  // setAnsweredQuestions={setAnsweredQuestions}
+  testId={testId}
+
 />
 
   

@@ -26,9 +26,11 @@ const IntroCard: React.FC<IntroCardProps> = ({
       </button>
       <button
         onClick={() => {
-          setStatus("active");
+          
+          
           setMode("learn");
           console.log(mode);
+          setStatus("active");
         }}
       >
         {" "}

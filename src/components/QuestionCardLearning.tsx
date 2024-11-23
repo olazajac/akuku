@@ -43,7 +43,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             console.log("check answear");
-            onCheckAnswer(e); // Call onCheckAnswer when Enter is pressed
+            onCheckAnswer(); // Call onCheckAnswer when Enter is pressed
           }
         }}
       />

@@ -3,8 +3,11 @@ import React, { useEffect, useRef, useState } from "react";
 const Timer: React.FC<{
   isRunning: boolean;
   onStop: (time: number) => void;
-}> = ({ isRunning, onStop }) => {
-  const [time, setTime] = useState(0); // Actual time displayed
+  time: number;
+  setTime: (time: number) => void;
+
+}> = ({ isRunning, onStop, time, setTime }) => {
+
   const intervalRef = useRef<number | null>(null); // Interval reference
 
   // Start the timer
@@ -12,7 +15,11 @@ const Timer: React.FC<{
     if (isRunning) {
       if (intervalRef.current === null) {
         intervalRef.current = window.setInterval(() => {
-          setTime((prevTime) => prevTime + 1); // Increment time by 1 second
+          // setTime((prevTime: number ) => prevTime + 1); // Increment time by 1 second
+
+          setTime(time + 1);
+
+          
         }, 1000);
       }
     } else if (!isRunning && intervalRef.current !== null) {

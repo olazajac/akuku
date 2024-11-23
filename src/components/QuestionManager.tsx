@@ -9,6 +9,10 @@ import CorrectCard from "./CorrectCard";
 import IntroCard from "./IntroCard";
 import SwipeListener from "./SwipeListener"; // Import the swipe listener component
 import Timer from "./Timer"; // Import the Timer component
+import Hint from "./Hint";
+import Stopper from "./Stopper";
+import ScoreTable from "./ScoreTable";
+import { log } from "console";
 
 type Question = {
   pytanie: string; // The question text
@@ -19,13 +23,25 @@ type Question = {
   index: number; // Unique index
 };
 
+interface Results {
+  date: string;
+  time: string;
+  score: string;
+  test_id: string;
+  mistakes: {
+    pytanie: string;
+    odpowiedz: string;
+  }[];
+}
+
 
 
 
 
 const QuestionManager: React.FC<{
   questions: { pytanie: string; odpowiedz: string }[];
-}> = ({ questions }) => {
+  testId: number;
+}> = ({ questions,testId }) => {
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
 
@@ -39,22 +55,39 @@ const QuestionManager: React.FC<{
   const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
   const [totalTime, setTotalTime] = useState<number>(0); // Store total time taken
   const [prevquestion, setPrevquestion] =   useState<string | null>(null);
+  const [showHint, setShowHint] = useState<boolean>(false);
+  const [time, setTime] = useState(0); // Actual time displayed
+
+  
+
+
   
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
+
+      console.log(event.key);
+
+      
       if (status === "active" && mode === "learn" && !isQuizFinished) {
         if (event.key === "ArrowRight") {
-          handleCheckAnswer();
+          handleCheckAnswer(true);
         }
         if (event.key === "ArrowLeft") {
-          handleCheckAnswer();
+          handleCheckAnswer(false);
         }
       }
+      
 
-      if (event.ctrlKey && event.key === "m") {
-        console.log(
-          "sdfdsafdsafffffffffffffffffffffffffffffffffffffffffffffffffff"
-        );
+      if (event.ctrlKey && event.key.toLowerCase() === "q") {
+
+        setShowHint(true)
+
+        setInterval(() => {
+          setShowHint(false);
+        }, 1000);
+
+        
+        event.preventDefault(); // Optional: prevents default browser behavior if needed
       }
 
       if (status === "correct" || status === "error") {
@@ -62,7 +95,7 @@ const QuestionManager: React.FC<{
       }
 
       // Remove the event listener after the first call
-      window.removeEventListener("keydown", handleKeyPress);
+      // window.removeEventListener("keydown", handleKeyPress);
     };
 
     window.addEventListener("keydown", handleKeyPress);
@@ -71,6 +104,13 @@ const QuestionManager: React.FC<{
       window.removeEventListener("keydown", handleKeyPress);
     };
   }, [status, mode]);
+
+
+
+
+  
+
+
 
   useEffect(() => {
     // Initialize questions
@@ -105,6 +145,14 @@ const QuestionManager: React.FC<{
     }
   }, [questions]);
 
+
+
+
+
+
+
+
+
   // Start timer when quiz begins
   const startTimer = () => {
     setIsTimerRunning(true);
@@ -115,6 +163,7 @@ const QuestionManager: React.FC<{
     setIsTimerRunning(false);
   };
   const handleStopTimer = (time: number) => {
+    console.log("Timer stopped with time:", time);
     setTotalTime(time);
   };
 
@@ -178,10 +227,8 @@ const QuestionManager: React.FC<{
 
     if (currentQuestion) {
     speakAnswer(currentQuestion.odpowiedz);
-    
     setStatus("correct");
-  }
-  if (currentQuestion) {
+
     // Move the question to guessed state
     updateQuestionStatus(currentQuestion.index, { guessed: 1, hot: 0 }); // Changed from active to hot
   }
@@ -196,7 +243,7 @@ const QuestionManager: React.FC<{
 
     if (currentQuestion) {
     speakAnswer(currentQuestion.odpowiedz);
-    
+
     setStatus("error");
 
     
@@ -219,8 +266,9 @@ const QuestionManager: React.FC<{
   }
   };
 
-  const handleCheckAnswer = () => {
+  const handleCheckAnswer = (result: boolean) => {
     if (currentQuestion) {
+
     if (mode === "test") {
       if (!currentQuestion || userAnswer.trim() === "") return;
     }
@@ -228,11 +276,11 @@ const QuestionManager: React.FC<{
     // speakAnswer(currentQuestion.odpowiedz);
 
     // Ensure correct answer is trimmed and lowercased
-    const correctAnswer = currentQuestion?.odpowiedz.trim().toLowerCase();
+    const correctAnswer = currentQuestion.odpowiedz.trim().toLowerCase();
     const userAnswerTrimmed = userAnswer.trim().toLowerCase();
 
     // Check if the answer is correct
-    const isAnswerCorrect =  userAnswerTrimmed === correctAnswer ;
+    const isAnswerCorrect =  mode === "test" ? userAnswerTrimmed === correctAnswer : result ;
 
     
 
@@ -278,9 +326,13 @@ const QuestionManager: React.FC<{
       const nextQuestion = availableQuestions[randomIndex];
 
       setCurrentQuestion(nextQuestion);
-      console.log("-----------------" + nextQuestion.odpowiedz);
+      
     } else {
+
+      setTotalTime(time)
       stopTimer(); // Stop the timer
+      console.log('------------------------------------timer has been stopped');
+      
     }
     if (inputRef.current) {
       inputRef.current.focus();
@@ -317,17 +369,174 @@ const QuestionManager: React.FC<{
     }
   };
 
+
+  useEffect(() => {
+    if (isQuizFinished && totalTime > 0) {
+      console.log("Quiz finished with total time:", totalTime);
+      handleTestCompletion(); // Ensure totalTime is finalized before calling
+    }
+  }, [isQuizFinished, totalTime]);
+
+  
+
+
+
+const saveTestResults = async (results: Results) => {
+
+  const pageId = 24737; // Your page ID
+
+    // Validate score before proceeding
+    if (isNaN(Number(results.score))) {
+      // console.error("Invalid score: NaN. Skipping API call.");
+      return; // Exit the function early
+    }
+
+  try {
+    // Step 1: Fetch the existing data
+    const fetchResponse = await fetch(`https://akuku.club/wp-json/wp/v2/pages/${pageId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Basic " + btoa("ola:F0JP 6SLF Dk6n JaMJ Jr3O v1lj"), // Replace with your credentials
+      },
+    });
+
+    if (!fetchResponse.ok) {
+      throw new Error(`HTTP error fetching existing data! Status: ${fetchResponse.status}`);
+    }
+    
+    const fetchResult = await fetchResponse.json();
+    
+    // Step 1: Retrieve existing rows or initialize empty arrays
+    const existingEntries = fetchResult.acf?.single_entry || []; // For main repeater
+    const existingMistakes = fetchResult.acf?.mistakes || []; // For mistakes repeater
+    
+    // Step 2: Prepare new entry for 'single_entry'
+    const newEntry = {
+      date: results.date,
+      time: results.time,
+      score: results.score,
+      test_id: results.test_id,
+      mistakes: results.mistakes.map((mistake) => ({
+        pytanie: mistake.pytanie,
+        odpowiedz: mistake.odpowiedz,
+        
+      })), // Map mistakes into the proper structure
+    };
+    
+    // Step 3: Prepare updated mistakes (append new ones)
+    const updatedMistakes = [
+      ...existingMistakes,
+      ...results.mistakes.map((mistake) => ({
+        pytanie: mistake.pytanie,
+        odpowiedz: mistake.odpowiedz,
+      })),
+    ];
+    
+    // Step 4: Prepare the updated data payload
+    const postData = {
+      acf: {
+        single_entry: [...existingEntries, newEntry], // Add the new entry to single_entry
+        mistakes: updatedMistakes, // Update the mistakes field with new entries
+      },
+    };
+    
+    console.log("Payload being sent:", JSON.stringify(postData, null, 2)); // Debugging payload
+    
+
+    const updateResponse = await fetch(`https://akuku.club/wp-json/wp/v2/pages/${pageId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Basic " + btoa("ola:F0JP 6SLF Dk6n JaMJ Jr3O v1lj"), // Replace with your credentials
+      },
+      body: JSON.stringify(postData),
+    });
+
+    if (!updateResponse.ok) {
+      throw new Error(`HTTP error updating data! Status: ${updateResponse.status}`);
+    }
+
+    const updateResult = await updateResponse.json();
+    console.log("Test results appended successfully:", updateResult);
+  } catch (error) {
+    console.error("Failed to append test results:", error);
+  }
+};
+
+  
+  
+
+  
+const handleTestCompletion = () => {
+  const results = {
+    date: new Date().toISOString().split("T")[0],
+    time: time > 0 ? time.toString() : "0", // Use totalTime or default to "0"
+    score: ((getFilteredGuessedQuestions().length / allQuestions.length) * 100).toFixed(2),
+    test_id: testId.toString(),
+    mistakes: getFilteredErrorQuestions().map((question) => ({
+      pytanie: question.pytanie,
+      odpowiedz: question.odpowiedz,
+    })),
+  };
+
+  console.log("Test completion data:", results); // Debugging log
+  saveTestResults(results);
+};
+
+
+
+
+const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[]) => {
+  // Initialize questions
+  const initializedQuestions = mistakes.map((q, index) => ({
+    pytanie: q.pytanie,
+    odpowiedz: q.odpowiedz,
+    hot: 0, // Changed from active to hot
+    guessed: 0,
+    errors: 0,
+    index: index,
+  }));
+
+  setAllQuestions(initializedQuestions);
+
+  // Shuffle questions
+  const shuffled = shuffleArray(initializedQuestions);
+  setShuffledQuestions(shuffled);
+
+  // Set the first 4 questions as hot
+  const initialHotQuestions = shuffled.slice(0, 4);
+  setShuffledQuestions((prev) =>
+    prev.map((q) => (initialHotQuestions.includes(q) ? { ...q, hot: 1 } : q))
+  );
+
+  // Set the current question to the first hot question
+  setCurrentQuestion(initialHotQuestions[0]);
+  setPrevquestion(initialHotQuestions[0]?.odpowiedz ?? null);
+
+  // Restart the quiz
+  setStatus("intro");
+
+  // Focus the input after restarting
+  if (inputRef.current) {
+    inputRef.current.focus();
+  }
+};
+
+  
+
   return (
     <div className="flex flex-col items-center justify-center mb-6">
       {/* Timer Component */}
-      <Timer isRunning={isTimerRunning} onStop={handleStopTimer} />
+      <Timer isRunning={isTimerRunning} onStop={handleStopTimer} time={time} setTime={setTime}/>
 
       <SwipeListener
         onSwipeRight={handleRightSwipe}
         onSwipeLeft={handleLeftSwipe} // Optional, only if you need left swipe handling
       />
 
-      <p>{userAnswer}</p>
+
+    
       <Progress
         totalQuestions={allQuestions.length}
         guessedCount={getFilteredGuessedQuestions().length}
@@ -338,7 +547,7 @@ const QuestionManager: React.FC<{
         isRepeatChecked={isRepeatChecked}
         setIsRepeatChecked={setIsRepeatChecked}
       />
-
+         {showHint && <Hint correctAnswer = {currentQuestion?.odpowiedz} /> } 
       {status === "intro" && (
         <IntroCard
           mode={mode}
@@ -357,7 +566,7 @@ const QuestionManager: React.FC<{
       {status === "error" && (
         <ErrorCard
           userAnswer={userAnswer}
-          setStatus={setStatus}
+          setStatus={handleStatusChange}
           prevquestion={prevquestion}
           speakAnswer={speakAnswer}
         />
@@ -375,6 +584,20 @@ const QuestionManager: React.FC<{
           mode={mode}
         />
       )}
+
+
+
+{!isQuizFinished && mode === 'learn' && (<Stopper status={status} onCheckAnswer={handleCheckAnswer} />)}
+
+{isQuizFinished && (
+        <FinalScore
+          guessedCount={getFilteredGuessedQuestions().length}
+          incorrectCount={getTotalErrorCount()}
+          totalQuestions={allQuestions.length}
+          totalTime={totalTime} // Pass the total time taken to FinalScore
+        />
+      )}
+
 
       {/* Display the lists of questions using filtered results */}
       <div className="mt-4">
@@ -429,7 +652,7 @@ const QuestionManager: React.FC<{
         </ul>
 
         <h3>Rest Questions:</h3>
-        <ul className="flex flex-wrap mt-2 gap-4">
+        <ul className="flex flex-wrap mt-2 gap-4" >
           {shuffledQuestions
             .filter((q) => q.hot === 0 && q.guessed === 0)
             .map((q) => (
@@ -438,25 +661,26 @@ const QuestionManager: React.FC<{
                 className="p-2 w-48 border border-blue-200 bg-white"
               >
                 {q.pytanie}
-                <div className="text-sm text-gray-600 mt-1">
+                <div className="text-sm text-gray-600 mt-1" onClick={(e) => {
+          e.stopPropagation();
+          speakAnswer(q.odpowiedz);
+        }}  >
                   <p>Hot: {q.hot}</p>
                   <p>Guessed: {q.guessed}</p>
                   <p>Errors: {q.errors}</p>
                   <p>ID: {q.index}</p>
+                 
                 </div>
               </li>
             ))}
         </ul>
       </div>
 
-      {isQuizFinished && (
-        <FinalScore
-          guessedCount={getFilteredGuessedQuestions().length}
-          incorrectCount={getTotalErrorCount()}
-          totalQuestions={allQuestions.length}
-          totalTime={totalTime} // Pass the total time taken to FinalScore
-        />
-      )}
+
+
+<ScoreTable onRedoMistakes={handleRedoMistakes}  />
+
+
     </div>
   );
 };
