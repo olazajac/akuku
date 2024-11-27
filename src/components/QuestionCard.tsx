@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import Button from "./Button";
 
 interface QuestionCardProps {
   question: string;
@@ -62,18 +63,24 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
 
       {mode === "learn" && (
         <>
-          <button
-            onClick={() => onCheckAnswer(false)}
-            className="mt-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Nie Umiem
-          </button>
-          <button
-            onClick={() => onCheckAnswer(true)}
-            className="mt-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Umiem
-          </button>
+             <Button
+        text="Nie umiem"
+        backgroundColor="m-2 bg-red-600 hover:bg-red-700"
+        textColor="text-white"
+        onClick={() => onCheckAnswer(false)}
+      />
+          <Button
+        text="Umiem"
+        backgroundColor="m-2 bg-green-600 hover:bg-green-700"
+        textColor="text-white"
+        onClick={() => onCheckAnswer(true)}
+      />
+
+       
+
+
+
+      
         </>
       )}
     </div>

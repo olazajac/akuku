@@ -603,6 +603,32 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[]) 
       <div className="mt-4">
      
 
+
+        <h3>Questions:</h3>
+        <ul className="flex flex-wrap mt-2 gap-4" >
+          {shuffledQuestions
+            .filter((q) => q.hot === 0 && q.guessed === 0)
+            .map((q) => (
+              <li
+                key={q.index}
+                className="p-2 w-48 border border-blue-200 bg-white"
+              >
+                {q.pytanie}
+                <div className="text-sm text-gray-600 mt-1" onClick={(e) => {
+          e.stopPropagation();
+          speakAnswer(q.odpowiedz);
+        }}  >
+                  <p>Hot: {q.hot}</p>
+                  <p>Guessed: {q.guessed}</p>
+                  <p>Errors: {q.errors}</p>
+                  <p>ID: {q.index}</p>
+                 
+                </div>
+              </li>
+            ))}
+        </ul>
+
+
         <h3>Guessed Questions:</h3>
         <ul className="flex flex-wrap mt-2 gap-4">
           {getFilteredGuessedQuestions().map((q) => (
@@ -633,29 +659,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[]) 
           ))}
         </ul>
 
-        <h3>Rest Questions:</h3>
-        <ul className="flex flex-wrap mt-2 gap-4" >
-          {shuffledQuestions
-            .filter((q) => q.hot === 0 && q.guessed === 0)
-            .map((q) => (
-              <li
-                key={q.index}
-                className="p-2 w-48 border border-blue-200 bg-white"
-              >
-                {q.pytanie}
-                <div className="text-sm text-gray-600 mt-1" onClick={(e) => {
-          e.stopPropagation();
-          speakAnswer(q.odpowiedz);
-        }}  >
-                  <p>Hot: {q.hot}</p>
-                  <p>Guessed: {q.guessed}</p>
-                  <p>Errors: {q.errors}</p>
-                  <p>ID: {q.index}</p>
-                 
-                </div>
-              </li>
-            ))}
-        </ul>
+        
       </div>
 
 
