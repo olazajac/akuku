@@ -46,9 +46,7 @@ const Stopper: React.FC<StopperProps> = ({ status, onCheckAnswer }) => {
       <p style={{ fontSize: "2rem", color: counter === 0 ? "red" : "black" }}>
         {counter}
       </p>
-      <button onClick={handleSkip} style={{ marginTop: "10px", padding: "8px 16px" }}>
-        Skip to End
-      </button>
+      
     </div>
   );
 };

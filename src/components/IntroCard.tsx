@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "./Button";
 
 interface IntroCardProps {
   mode: string;
@@ -13,29 +14,33 @@ const IntroCard: React.FC<IntroCardProps> = ({
 
 }) => {
   return (
-    <div className="mb-4 p-4 border rounded-md shadow-md bg-green-100">
-      <button
+    <div className="grid gap-4 grid-cols-2 p-10">
+     
+    
+
+      <Button
+        text="Learn"
+        backgroundColor="bg-green-600 hover:bg-green-700"
+        textColor="text-white"
+        onClick={() => {
+          setMode("learn");
+          console.log(mode);
+          setStatus("active");
+        }}
+      />
+
+<Button
+        text="Test"
+        backgroundColor="bg-green-600 hover:bg-green-700"
+        textColor="text-white"
         onClick={() => {
           setStatus("active");
           setMode("test");
           console.log(mode);
         }}
-      >
-        {" "}
-        Test
-      </button>
-      <button
-        onClick={() => {
-          
-          
-          setMode("learn");
-          console.log(mode);
-          setStatus("active");
-        }}
-      >
-        {" "}
-        Learn
-      </button>
+      />
+
+      
     </div>
   );
 };

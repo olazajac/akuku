@@ -599,27 +599,9 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[]) 
       )}
 
 
-      {/* Display the lists of questions using filtered results */}
+      
       <div className="mt-4">
-        <h3>Hot Questions:</h3>
-        <ul className="flex flex-wrap mt-2 gap-4">
-          {shuffledQuestions
-            .filter((q) => q.hot === 1)
-            .map((q) => (
-              <li
-                key={q.index}
-                className="p-2 w-48 border border-blue-400 bg-white"
-              >
-                {q.pytanie}
-                <div className="text-sm text-gray-600 mt-1">
-                  <p>Hot: {q.hot}</p>
-                  <p>Guessed: {q.guessed}</p>
-                  <p>Errors: {q.errors}</p>
-                  <p>ID: {q.index}</p>
-                </div>
-              </li>
-            ))}
-        </ul>
+     
 
         <h3>Guessed Questions:</h3>
         <ul className="flex flex-wrap mt-2 gap-4">
