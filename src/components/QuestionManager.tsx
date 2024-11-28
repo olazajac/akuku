@@ -8,7 +8,6 @@ import ErrorCard from "./ErrorCard";
 import CorrectCard from "./CorrectCard";
 import IntroCard from "./IntroCard";
 import SwipeListener from "./SwipeListener"; // Import the swipe listener component
-import Timer from "./Timer"; // Import the Timer component
 import Hint from "./Hint";
 import Stopper from "./Stopper";
 import ScoreTable from "./ScoreTable";
@@ -68,7 +67,7 @@ const QuestionManager: React.FC<{
 
 
   
-  const { time, isRunning, startTimer, stopTimer, minutes, seconds } = useTimer();
+  const {  startTimer, stopTimer, minutes, seconds } = useTimer();
 
   useEffect(() => {
     console.log("User Answer:", userAnswer);
