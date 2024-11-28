@@ -56,7 +56,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
 
 <Button
         text="Submit"
-        backgroundColor="bg-green-600 hover:bg-green-700 mt-1 w-full"
+        backgroundColor="bg-green-600 hover:bg-green-700 mt-1 w-full py-8"
         textColor="text-white"
         onClick={() => onCheckAnswer(true)}
       />
@@ -70,13 +70,13 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           
           <Button
         text="Nie umiem"
-        backgroundColor="m-2 bg-red-600 hover:bg-red-700 w-48"
+        backgroundColor="m-2 bg-red-600 hover:bg-red-700 w-48 py-8"
         textColor="text-white"
         onClick={() => onCheckAnswer(false)}
       />
           <Button
         text="Umiem"
-        backgroundColor="m-2 bg-green-600 hover:bg-green-700 w-48"
+        backgroundColor="m-2 bg-green-600 hover:bg-green-700 w-48 py-8"
         textColor="text-white"
         onClick={() => onCheckAnswer(true)}
       />

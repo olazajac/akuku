@@ -13,7 +13,7 @@ import Hint from "./Hint";
 import Stopper from "./Stopper";
 import ScoreTable from "./ScoreTable";
 import { useTimer } from "../hooks/useTimer";
-
+import QuestionLists from "./QuestionLists"; // Import the new component
 
 
 
@@ -490,10 +490,20 @@ const saveTestResults = async (results: Results) => {
 
   
 const handleTestCompletion = () => {
+
+  
+  const totalQuestions =
+    getFilteredGuessedQuestions().length + getTotalErrorCount();
+  const score =
+    totalQuestions > 0
+      ? ((getFilteredGuessedQuestions().length * 100) / totalQuestions).toFixed(0)
+      : "0"; // Handle edge case where totalQuestions is 0
+
+
   const results = {
     date: new Date().toISOString().split("T")[0],
     time: time > 0 ? time.toString() : "0", // Use totalTime or default to "0"
-    score: ((getFilteredGuessedQuestions().length / allQuestions.length) * 100).toFixed(2),
+    score: score,
     test_id: testId.toString(),
     mistakes: getFilteredErrorQuestions().map((question) => ({
       pytanie: question.pytanie,
@@ -508,7 +518,7 @@ const handleTestCompletion = () => {
 
 
 
-const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[]) => {
+const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], mode: string) => {
   // Initialize questions
   const initializedQuestions = mistakes.map((q, index) => ({
     pytanie: q.pytanie,
@@ -535,8 +545,16 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[]) 
   setCurrentQuestion(initialHotQuestions[0]);
   setPrevquestion(initialHotQuestions[0]?.odpowiedz ?? null);
 
-  // Restart the quiz
-  setStatus("intro");
+  setMode(mode);
+  
+  setStatus("active");
+  startTimer()
+
+   // Scroll to the top of the page
+   window.scrollTo({
+    top: 0,
+    behavior: "smooth", // Adds a smooth scrolling effect
+  });
 
   // Focus the input after restarting
   if (inputRef.current) {
@@ -631,69 +649,21 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[]) 
      
 
 
-        <h3 className="text-center text-sm text-gray-400">Questions:</h3>
-        <ul className="flex flex-wrap mt-2 gap-4" >
-          {shuffledQuestions
-            .filter((q) => q.hot === 0 && q.guessed === 0)
-            .map((q) => (
-              <li
-                key={q.index}
-                className="p-2 w-full border border-gray-200 bg-gray-100 align-middle justify-items-center rounded-md"
-                onClick={(e) => {
-                  
-                  e.stopPropagation();
-                  speakAnswer(q.odpowiedz);
-                }} 
-              >
-                {q.pytanie}
-                <div className="bg-red w-full h-full text-sm text-gray-600 mt-1"  >
-                  {/* <p>Hot: {q.hot}</p> */}
-                  {/* <p>Guessed: {q.guessed}</p> */}
-                  {/* <p>Errors: {q.errors}</p> */}
-                  {/* <p>ID: {q.index}</p> */}
-                 
-                </div>
-              </li>
-            ))}
-        </ul>
 
+      <QuestionLists
+        shuffledQuestions={shuffledQuestions}
+        onSpeakAnswer={speakAnswer}
+        status={status}
+      />
 
-        <h3>Guessed Questions:</h3>
-        <ul className="flex flex-wrap mt-2 gap-4">
-          {getFilteredGuessedQuestions().map((q) => (
-            <li key={q.index} className="p-2 w-full border border-gray-200 bg-green-100 align-middle justify-items-center rounded-md">
-              {q.pytanie}
-              <div className="text-sm text-gray-600 mt-1">
-                {/* <p>Hot: {q.hot}</p> */}
-                {/* <p>Guessed: {q.guessed}</p> */}
-                {/* <p>Errors: {q.errors}</p> */}
-                {/* <p>ID: {q.index}</p> */}
-              </div>
-            </li>
-          ))}
-        </ul>
-
-        <h3>Error Questions:</h3>
-        <ul className="flex flex-wrap mt-2 gap-4">
-          {getFilteredErrorQuestions().map((q) => (
-            <li key={q.index} className="p-2 w-full border border-gray-200 bg-red-100 align-middle justify-items-center rounded-md flex flex-row content-between">
-              {q.pytanie}
-              <div className="text-sm text-gray-600 mt-1">
-                {/* <p>Hot: {q.hot}</p> */}
-                {/* <p>Guessed: {q.guessed}</p> */}
-                <p>Errors: {q.errors}</p>
-                {/* <p>ID: {q.index}</p> */}
-              </div>
-            </li>
-          ))}
-        </ul>
+     
 
 
       </div>
 
+      {status === "intro" &&
+      <ScoreTable testId={testId.toString()} onRedoMistakes={handleRedoMistakes} />}
 
-
-<ScoreTable onRedoMistakes={handleRedoMistakes}  />
 
 
     </div>

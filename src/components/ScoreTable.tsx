@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Button from "./Button";
 
 type ScoreEntry = {
   date: string;
@@ -8,9 +9,10 @@ type ScoreEntry = {
   mistakes: { pytanie: string; odpowiedz: string }[];
 };
 
-const ScoreTable: React.FC<{ onRedoMistakes: (mistakes: { pytanie: string; odpowiedz: string }[]) => void }> = ({
-  onRedoMistakes,
-}) => {
+const ScoreTable: React.FC<{
+  testId: string; // Current test ID
+  onRedoMistakes: (mistakes: { pytanie: string; odpowiedz: string }[], mode: string) => void;
+}> = ({ testId, onRedoMistakes }) => {
   const [scores, setScores] = useState<ScoreEntry[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -42,17 +44,19 @@ const ScoreTable: React.FC<{ onRedoMistakes: (mistakes: { pytanie: string; odpow
     fetchScores();
   }, []);
 
+  const filteredScores = scores.filter((entry) => entry.test_id === testId).reverse();
+
   if (loading) {
     return <p>Loading scores...</p>;
   }
 
-  if (scores.length === 0) {
-    return <p>No scores available.</p>;
+  if (filteredScores.length === 0) {
+    return <p>No scores available for this test.</p>;
   }
 
   return (
     <div className="mt-8">
-      <h3 className="text-xl font-semibold mb-4">Score Table</h3>
+      
       <table className="table-auto border-collapse border border-gray-300 w-full">
         <thead>
           <tr>
@@ -63,42 +67,53 @@ const ScoreTable: React.FC<{ onRedoMistakes: (mistakes: { pytanie: string; odpow
             <th className="border border-gray-300 px-4 py-2">Redo</th>
           </tr>
         </thead>
-  
+        <tbody>
+          {filteredScores.map((entry, index) => (
+            <React.Fragment key={index}>
+              <tr>
+                <td className="border border-gray-300 px-4 py-2">{entry.date}</td>
+                <td className="border border-gray-300 px-4 py-2">{entry.time}</td>
+                <td className="border border-gray-300 px-4 py-2">{entry.score}%</td>
+                <td className="border border-gray-300 px-4 py-2">{entry.test_id}</td>
+                <td className="border border-gray-300 px-4 py-2">
 
-<tbody>
-  {scores.map((entry, index) => (
-    <React.Fragment key={index}>
-      <tr>
-        <td className="border border-gray-300 px-4 py-2">{entry.date}</td>
-        <td className="border border-gray-300 px-4 py-2">{entry.time}</td>
-        <td className="border border-gray-300 px-4 py-2">{entry.score}</td>
-        <td className="border border-gray-300 px-4 py-2">{entry.test_id}</td>
-        <td className="border border-gray-300 px-4 py-2">
-          <button
-            onClick={() => onRedoMistakes(entry.mistakes)}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Redo
-          </button>
-        </td>
-      </tr>
-      {/* Display mistakes as a sublist */}
-      {entry.mistakes && entry.mistakes.length > 0 && (
-        <tr>
-          <td colSpan={5} className="border border-gray-300 px-4 py-2">
-            <ul className="list-disc pl-5">
-              {entry.mistakes.map((mistake, mistakeIndex) => (
-                <li key={mistakeIndex}>
-                  <strong>Question:</strong> {mistake.pytanie}, <strong>Answer:</strong> {mistake.odpowiedz}
-                </li>
-              ))}
-            </ul>
-          </td>
-        </tr>
-      )}
-    </React.Fragment>
-  ))}
-</tbody>
+
+                <Button
+        text="Test"
+        backgroundColor="bg-gray-200 hover:bg-green-700 p-1 m-1"
+        textColor="text-gray-800"
+        onClick={() => onRedoMistakes(entry.mistakes, "test")}
+      />
+
+
+<Button
+        text="Learn"
+        backgroundColor="bg-gray-200 hover:bg-green-700 p-1 m-1"
+        textColor="text-gray-800"
+        onClick={() => onRedoMistakes(entry.mistakes, "learn")}
+      />
+
+                 
+                </td>
+              </tr>
+              {/* Display mistakes as a sublist */}
+              {entry.mistakes && entry.mistakes.length > 0 && (
+                <tr>
+                  <td colSpan={5} className="border border-gray-300 px-4 py-2">
+                    <ul className="list-disc pl-5 list-none text-gray-500 text-xs">
+                      {entry.mistakes.map((mistake, mistakeIndex) => (
+                        <li key={mistakeIndex}>
+                          {mistake.pytanie} -   
+                          <strong> {mistake.odpowiedz}</strong> 
+                        </li>
+                      ))}
+                    </ul>
+                  </td>
+                </tr>
+              )}
+            </React.Fragment>
+          ))}
+        </tbody>
       </table>
     </div>
   );

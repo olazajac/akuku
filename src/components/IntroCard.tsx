@@ -22,7 +22,7 @@ const IntroCard: React.FC<IntroCardProps> = ({
 
       <Button
         text="Learn"
-        backgroundColor="bg-green-600 hover:bg-green-700"
+        backgroundColor="bg-green-600 hover:bg-green-700 py-8"
         textColor="text-white"
         onClick={() => {
           setMode("learn");
@@ -34,7 +34,7 @@ const IntroCard: React.FC<IntroCardProps> = ({
 
 <Button
         text="Test"
-        backgroundColor="bg-green-600 hover:bg-green-700"
+        backgroundColor="bg-green-600 hover:bg-green-700 py-8"
         textColor="text-white"
         onClick={() => {
           setStatus("active");
