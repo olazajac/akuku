@@ -67,7 +67,7 @@ const QuestionManager: React.FC<{
 
 
   
-  const {  startTimer, stopTimer, minutes, seconds } = useTimer();
+  const {  time, startTimer, stopTimer, minutes, seconds } = useTimer();
 
   useEffect(() => {
     console.log("User Answer:", userAnswer);
@@ -390,11 +390,11 @@ const QuestionManager: React.FC<{
 
   useEffect(() => {
     // in order to save results in acf
-    if (isQuizFinished && totalTime > 0) {
-      console.log("Quiz finished with total time:", totalTime);
+    if (isQuizFinished && time > 0) {
+      console.log("Quiz finished with total time:", time);
       handleTestCompletion(); // Ensure totalTime is finalized before calling
     }
-  }, [isQuizFinished, totalTime]);
+  }, [isQuizFinished, time]);
 
   
 
@@ -637,7 +637,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
           guessedCount={getFilteredGuessedQuestions().length}
           incorrectCount={getTotalErrorCount()}
           totalQuestions={allQuestions.length}
-          totalTime={totalTime} // Pass the total time taken to FinalScore
+          totalTime={time} // Pass the total time taken to FinalScore
         />
       )}
 
