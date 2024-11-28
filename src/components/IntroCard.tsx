@@ -14,7 +14,7 @@ const IntroCard: React.FC<IntroCardProps> = ({
 
 }) => {
   return (
-    <div className="grid gap-4 grid-cols-2 p-10">
+    <div className="grid gap-4 grid-cols-2 w-full pt-5 pb-5">
      
     
 

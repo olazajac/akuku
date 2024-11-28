@@ -538,6 +538,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[]) 
 
     
       <Progress
+        isRepeatChecked={isRepeatChecked}
         totalQuestions={allQuestions.length}
         guessedCount={getFilteredGuessedQuestions().length}
         incorrectCount={getTotalErrorCount()} // Pass the sum of all errors
@@ -604,24 +605,26 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[]) 
      
 
 
-        <h3>Questions:</h3>
+        <h3 className="text-center text-sm text-gray-400">Questions:</h3>
         <ul className="flex flex-wrap mt-2 gap-4" >
           {shuffledQuestions
             .filter((q) => q.hot === 0 && q.guessed === 0)
             .map((q) => (
               <li
                 key={q.index}
-                className="p-2 w-48 border border-blue-200 bg-white"
+                className="p-2 w-full border border-gray-200 bg-gray-100 align-middle justify-items-center rounded-md"
+                onClick={(e) => {
+                  
+                  e.stopPropagation();
+                  speakAnswer(q.odpowiedz);
+                }} 
               >
                 {q.pytanie}
-                <div className="text-sm text-gray-600 mt-1" onClick={(e) => {
-          e.stopPropagation();
-          speakAnswer(q.odpowiedz);
-        }}  >
-                  <p>Hot: {q.hot}</p>
-                  <p>Guessed: {q.guessed}</p>
-                  <p>Errors: {q.errors}</p>
-                  <p>ID: {q.index}</p>
+                <div className="bg-red w-full h-full text-sm text-gray-600 mt-1"  >
+                  {/* <p>Hot: {q.hot}</p> */}
+                  {/* <p>Guessed: {q.guessed}</p> */}
+                  {/* <p>Errors: {q.errors}</p> */}
+                  {/* <p>ID: {q.index}</p> */}
                  
                 </div>
               </li>
@@ -632,13 +635,13 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[]) 
         <h3>Guessed Questions:</h3>
         <ul className="flex flex-wrap mt-2 gap-4">
           {getFilteredGuessedQuestions().map((q) => (
-            <li key={q.index} className="p-2 w-48 bg-green-300">
+            <li key={q.index} className="p-2 w-full border border-gray-200 bg-green-100 align-middle justify-items-center rounded-md">
               {q.pytanie}
               <div className="text-sm text-gray-600 mt-1">
-                <p>Hot: {q.hot}</p>
-                <p>Guessed: {q.guessed}</p>
-                <p>Errors: {q.errors}</p>
-                <p>ID: {q.index}</p>
+                {/* <p>Hot: {q.hot}</p> */}
+                {/* <p>Guessed: {q.guessed}</p> */}
+                {/* <p>Errors: {q.errors}</p> */}
+                {/* <p>ID: {q.index}</p> */}
               </div>
             </li>
           ))}
@@ -647,19 +650,19 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[]) 
         <h3>Error Questions:</h3>
         <ul className="flex flex-wrap mt-2 gap-4">
           {getFilteredErrorQuestions().map((q) => (
-            <li key={q.index} className="p-2 w-48 bg-red-300">
+            <li key={q.index} className="p-2 w-full border border-gray-200 bg-red-100 align-middle justify-items-center rounded-md flex flex-row content-between">
               {q.pytanie}
               <div className="text-sm text-gray-600 mt-1">
-                <p>Hot: {q.hot}</p>
-                <p>Guessed: {q.guessed}</p>
+                {/* <p>Hot: {q.hot}</p> */}
+                {/* <p>Guessed: {q.guessed}</p> */}
                 <p>Errors: {q.errors}</p>
-                <p>ID: {q.index}</p>
+                {/* <p>ID: {q.index}</p> */}
               </div>
             </li>
           ))}
         </ul>
 
-        
+
       </div>
 
 

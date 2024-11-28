@@ -35,8 +35,8 @@ const SinglePost = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold">{post.title.rendered}</h1>
-      <p className="mb-4">{post.acf.test.length} Questions</p>
+      {/* <h1 className="text-2xl font-bold">{post.title.rendered}</h1>
+      <p className="mb-4">{post.acf.test.length} Questions</p> */}
 
       <QuestionManager
   questions={post.acf.test}

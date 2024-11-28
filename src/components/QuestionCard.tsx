@@ -31,8 +31,8 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   }, [status, inputRef, setUserAnswer]);
 
   return (
-    <div className="mb-4 p-4 border rounded-md shadow-md">
-      <h2 className="text-lg font-semibold">{question}</h2>
+    <div className="mb-4 p-4 ">
+      <h2 className="text-lg font-semibold text-center">{question}</h2>
 
       {mode === "test" && (
         <>
@@ -41,7 +41,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
             value={userAnswer}
             onChange={(e) => setUserAnswer(e.target.value)}
             ref={inputRef}
-            className="mt-2 p-2 border rounded w-full"
+            className="mt-2 mb-3 border-2 rounded-md rounded w-full p-5 text-center"
             placeholder="Type your answer"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -52,36 +52,43 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
             }}
           />
 
-          <button
-            onClick={() => onCheckAnswer(true)}
-            className="mt-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Submit
-          </button>
+
+
+<Button
+        text="Submit"
+        backgroundColor="bg-green-600 hover:bg-green-700 mt-1 w-full"
+        textColor="text-white"
+        onClick={() => onCheckAnswer(true)}
+      />
+
+          
         </>
       )}
 
       {mode === "learn" && (
-        <>
-             <Button
+        <div className="flex flex-row">
+          
+          <Button
         text="Nie umiem"
-        backgroundColor="m-2 bg-red-600 hover:bg-red-700"
+        backgroundColor="m-2 bg-red-600 hover:bg-red-700 w-48"
         textColor="text-white"
         onClick={() => onCheckAnswer(false)}
       />
           <Button
         text="Umiem"
-        backgroundColor="m-2 bg-green-600 hover:bg-green-700"
+        backgroundColor="m-2 bg-green-600 hover:bg-green-700 w-48"
         textColor="text-white"
         onClick={() => onCheckAnswer(true)}
       />
+           </div>
+  
 
        
 
 
 
       
-        </>
+        
       )}
     </div>
   );
