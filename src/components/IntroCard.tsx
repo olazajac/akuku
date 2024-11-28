@@ -5,12 +5,14 @@ interface IntroCardProps {
   mode: string;
   setMode: (mode: string) => void;
   setStatus: (status: string) => void;
+  startTimer: () => void;
 }
 
 const IntroCard: React.FC<IntroCardProps> = ({
   setMode,
   setStatus,
   mode,
+  startTimer,
 
 }) => {
   return (
@@ -26,6 +28,7 @@ const IntroCard: React.FC<IntroCardProps> = ({
           setMode("learn");
           console.log(mode);
           setStatus("active");
+          startTimer()
         }}
       />
 
@@ -37,6 +40,7 @@ const IntroCard: React.FC<IntroCardProps> = ({
           setStatus("active");
           setMode("test");
           console.log(mode);
+          startTimer()
         }}
       />
 

@@ -12,6 +12,16 @@ import Timer from "./Timer"; // Import the Timer component
 import Hint from "./Hint";
 import Stopper from "./Stopper";
 import ScoreTable from "./ScoreTable";
+import { useTimer } from "../hooks/useTimer";
+
+
+
+
+
+ 
+
+
+
 
 
 type Question = {
@@ -56,12 +66,18 @@ const QuestionManager: React.FC<{
   const [totalTime, setTotalTime] = useState<number>(0); // Store total time taken
   const [prevquestion, setPrevquestion] =   useState<string | null>(null);
   const [showHint, setShowHint] = useState<boolean>(false);
-  const [time, setTime] = useState(0); // Actual time displayed
+
+
+  
+  const { time, isRunning, startTimer, stopTimer, minutes, seconds } = useTimer();
+
+  useEffect(() => {
+    console.log("User Answer:", userAnswer);
+  }, [userAnswer]);
 
   
 
 
-  
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
 
@@ -93,9 +109,6 @@ const QuestionManager: React.FC<{
       if (status === "correct" || status === "error") {
         setStatus("active");
       }
-
-      // Remove the event listener after the first call
-      // window.removeEventListener("keydown", handleKeyPress);
     };
 
     window.addEventListener("keydown", handleKeyPress);
@@ -105,45 +118,16 @@ const QuestionManager: React.FC<{
     };
   }, [status, mode]);
 
-
-
-
+    // Function to handle right swipe (e.g., load next question)
+    const handleRightSwipe = () => {
+      console.log("Right swipe detected");
+    };
   
-
-
-
-  useEffect(() => {
-    // Initialize questions
-    const initializedQuestions = questions.map((q, index) => ({
-      pytanie: q.pytanie,
-      odpowiedz: q.odpowiedz,
-      hot: 0, // Changed from active to hot
-      guessed: 0,
-      errors: 0,
-      index: index,
-    }));
-
-    setAllQuestions(initializedQuestions);
-
-    // Shuffle questions
-    const shuffled = shuffleArray(initializedQuestions);
-    setShuffledQuestions(shuffled);
-
-    // Set the first 4 questions as hot
-    const initialHotQuestions = shuffled.slice(0, 4);
-    setShuffledQuestions((prev) =>
-      prev.map((q) => (initialHotQuestions.includes(q) ? { ...q, hot: 1 } : q))
-    );
-
-    // Set the current question to the first hot question
-    setCurrentQuestion(initialHotQuestions[0]);
-    setPrevquestion(initialHotQuestions[0]?.odpowiedz ?? null);
-
-    // Focus the input after loading
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [questions]);
+    // Function to handle left swipe (you can add other logic here)
+    const handleLeftSwipe = () => {
+      console.log("Left swipe detected");
+      // Implement logic for left swipe if needed
+    };
 
 
 
@@ -153,38 +137,8 @@ const QuestionManager: React.FC<{
 
 
 
-  // Start timer when quiz begins
-  const startTimer = () => {
-    setIsTimerRunning(true);
-  };
 
-  // Stop timer when quiz finishes
-  const stopTimer = () => {
-    setIsTimerRunning(false);
-  };
-  const handleStopTimer = (time: number) => {
-    console.log("Timer stopped with time:", time);
-    setTotalTime(time);
-  };
 
-  // Function to handle right swipe (e.g., load next question)
-  const handleRightSwipe = () => {
-    console.log("Right swipe detected");
-  };
-
-  // Function to handle left swipe (you can add other logic here)
-  const handleLeftSwipe = () => {
-    console.log("Left swipe detected");
-    // Implement logic for left swipe if needed
-  };
-
-  const shuffleArray = (array: Question[]): Question[] => {
-    return array.sort(() => Math.random() - 0.5);
-  };
-
-  const getTotalErrorCount = () => {
-    return shuffledQuestions.reduce((sum, q) => sum + q.errors, 0);
-  };
 
   const speakAnswer = async (text: string) => {
     const apiKey = "AIzaSyB1bktNK2YnF5VK0ARGlHIa3a_y7aVeJ70"; // Replace with your actual API Key
@@ -222,6 +176,70 @@ const QuestionManager: React.FC<{
       }
     }
   };
+
+
+
+  
+
+  
+
+
+
+  useEffect(() => {
+    // Initialize questions
+    const initializedQuestions = questions.map((q, index) => ({
+      pytanie: q.pytanie,
+      odpowiedz: q.odpowiedz,
+      hot: 0, // Changed from active to hot
+      guessed: 0,
+      errors: 0,
+      index: index,
+    }));
+
+    setAllQuestions(initializedQuestions);
+
+
+    // Shuffle questions
+    const shuffled = shuffleArray(initializedQuestions);
+    setShuffledQuestions(shuffled);
+
+    // Set the first 4 questions as hot
+    const initialHotQuestions = shuffled.slice(0, 4);
+    setShuffledQuestions((prev) =>
+      prev.map((q) => (initialHotQuestions.includes(q) ? { ...q, hot: 1 } : q))
+    );
+
+    // Set the current question to the first hot question
+    setCurrentQuestion(initialHotQuestions[0]);
+    setPrevquestion(initialHotQuestions[0]?.odpowiedz ?? null);
+
+    // Focus the input after loading
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [questions]);
+
+
+
+
+  const shuffleArray = (array: Question[]): Question[] => {
+    return array.sort(() => Math.random() - 0.5);
+  };
+
+  const getTotalErrorCount = () => {
+    return shuffledQuestions.reduce((sum, q) => sum + q.errors, 0);
+  };
+
+
+
+
+
+
+
+
+
+
+  
 
   const correctStuff = () => {
 
@@ -266,6 +284,8 @@ const QuestionManager: React.FC<{
   }
   };
 
+
+
   const handleCheckAnswer = (result: boolean) => {
     if (currentQuestion) {
 
@@ -273,7 +293,6 @@ const QuestionManager: React.FC<{
       if (!currentQuestion || userAnswer.trim() === "") return;
     }
 
-    // speakAnswer(currentQuestion.odpowiedz);
 
     // Ensure correct answer is trimmed and lowercased
     const correctAnswer = currentQuestion.odpowiedz.trim().toLowerCase();
@@ -293,6 +312,7 @@ const QuestionManager: React.FC<{
     NewCurrentQuestion();
   }
   };
+
 
   const updateQuestionStatus = (index: number, updates: Partial<Question>) => {
     setShuffledQuestions((prev) =>
@@ -338,7 +358,7 @@ const QuestionManager: React.FC<{
       inputRef.current.focus();
     }
 
-    setUserAnswer("");
+    // setUserAnswer("");
   };
 
   const getFilteredGuessedQuestions = () => {
@@ -371,6 +391,7 @@ const QuestionManager: React.FC<{
 
 
   useEffect(() => {
+    // in order to save results in acf
     if (isQuizFinished && totalTime > 0) {
       console.log("Quiz finished with total time:", totalTime);
       handleTestCompletion(); // Ensure totalTime is finalized before calling
@@ -528,14 +549,17 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[]) 
   return (
     <div className="flex flex-col items-center justify-center mb-6">
       {/* Timer Component */}
-      <Timer isRunning={isTimerRunning} onStop={handleStopTimer} time={time} setTime={setTime}/>
-
+      
       <SwipeListener
         onSwipeRight={handleRightSwipe}
         onSwipeLeft={handleLeftSwipe} // Optional, only if you need left swipe handling
       />
 
 
+
+<div className="timer">
+        <p className="text-sm text-gray-700 bg-gray-300 rounded-lg px-2 py-1" > {minutes}m {seconds}s</p>
+      </div>
     
       <Progress
         isRepeatChecked={isRepeatChecked}
@@ -554,6 +578,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[]) 
           mode={mode}
           setMode={setMode}
           setStatus={handleStatusChange} // Updated this line
+          startTimer={startTimer}
         />
       )}
 
@@ -570,6 +595,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[]) 
           setStatus={handleStatusChange}
           prevquestion={prevquestion}
           speakAnswer={speakAnswer}
+          mode={mode}
         />
       )}
 

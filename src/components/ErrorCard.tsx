@@ -5,6 +5,7 @@ interface ErrorCardProps {
   setStatus: (status: string) => void;
   prevquestion: any;
   speakAnswer: (status: string) => void;
+  mode: string;
 }
 
 const ErrorCard: React.FC<ErrorCardProps> = ({
@@ -12,6 +13,7 @@ const ErrorCard: React.FC<ErrorCardProps> = ({
   setStatus,
   prevquestion,
   speakAnswer,
+  mode
 }) => {
     return (
       <div
@@ -25,7 +27,8 @@ const ErrorCard: React.FC<ErrorCardProps> = ({
           <strong>{prevquestion}</strong>
         </p>
         <p className="mt-2 text-sm">
-          <strong>You answered:</strong> 
+          {mode === 'test' && <strong>You answered:</strong> }
+          
         </p>
         <p  className="mt-2 text-lg">
         {userAnswer}
