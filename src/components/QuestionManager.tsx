@@ -8,7 +8,6 @@ import ErrorCard from "./ErrorCard";
 import CorrectCard from "./CorrectCard";
 import IntroCard from "./IntroCard";
 import SwipeListener from "./SwipeListener"; // Import the swipe listener component
-import Timer from "./Timer"; // Import the Timer component
 import Hint from "./Hint";
 import Stopper from "./Stopper";
 import ScoreTable from "./ScoreTable";
@@ -62,7 +61,7 @@ const QuestionManager: React.FC<{
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isRepeatChecked, setIsRepeatChecked] = useState<boolean>(false);
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
-  const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
+
   const [totalTime, setTotalTime] = useState<number>(0); // Store total time taken
   const [prevquestion, setPrevquestion] =   useState<string | null>(null);
   const [showHint, setShowHint] = useState<boolean>(false);
@@ -351,7 +350,8 @@ const QuestionManager: React.FC<{
 
       setTotalTime(time)
       stopTimer(); // Stop the timer
-      console.log('------------------------------------timer has been stopped');
+
+      
       
     }
     if (inputRef.current) {
