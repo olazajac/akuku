@@ -63,7 +63,6 @@ const QuestionManager: React.FC<{
   const [isRepeatChecked, setIsRepeatChecked] = useState<boolean>(false);
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
 
-  const [totalTime, setTotalTime] = useState<number>(0); // Store total time taken
   const [prevquestion, setPrevquestion] =   useState<string | null>(null);
   const [showHint, setShowHint] = useState<boolean>(false);
 
