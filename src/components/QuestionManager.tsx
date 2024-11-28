@@ -8,6 +8,7 @@ import ErrorCard from "./ErrorCard";
 import CorrectCard from "./CorrectCard";
 import IntroCard from "./IntroCard";
 import SwipeListener from "./SwipeListener"; // Import the swipe listener component
+import Timer from "./Timer"; // Import the Timer component
 import Hint from "./Hint";
 import Stopper from "./Stopper";
 import ScoreTable from "./ScoreTable";
@@ -348,10 +349,9 @@ const QuestionManager: React.FC<{
       
     } else {
 
-      setTotalTime(time)
+
       stopTimer(); // Stop the timer
 
-      
       
     }
     if (inputRef.current) {
@@ -502,7 +502,7 @@ const handleTestCompletion = () => {
 
   const results = {
     date: new Date().toISOString().split("T")[0],
-    time: time > 0 ? time.toString() : "0", // Use totalTime or default to "0"
+    time: `${minutes}:${seconds}`, // Use formatted time
     score: score,
     test_id: testId.toString(),
     mistakes: getFilteredErrorQuestions().map((question) => ({
@@ -596,7 +596,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
           mode={mode}
           setMode={setMode}
           setStatus={handleStatusChange} // Updated this line
-          startTimer={startTimer}
+          startTimer={startTimer} // Use timer's start method
         />
       )}
 
