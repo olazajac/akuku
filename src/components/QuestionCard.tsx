@@ -9,6 +9,8 @@ interface QuestionCardProps {
   inputRef: React.RefObject<HTMLInputElement>;
   status: string;
   mode: string;
+  doubleChecked: number;
+  setDoubleChecked: (result: number) => void; 
 
 }
 
@@ -20,6 +22,8 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   inputRef,
   status,
   mode,
+  doubleChecked,
+  setDoubleChecked,
 
 }) => {
   useEffect(() => {
@@ -32,7 +36,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
 
   return (
     <div className="mb-4 p-4 ">
-      <h2 className="text-lg font-semibold text-center">{question}</h2>
+      <h2 className="text-2xl text-white font-bold my-10 text-center">{question}</h2>
 
       {mode === "test" && (
         <>
@@ -54,14 +58,18 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
 
 
 
-<Button
+
+
+
+ <Button
         text="Submit"
         backgroundColor="bg-green-600 hover:bg-green-700 mt-1 w-full py-8"
         textColor="text-white"
         onClick={() => onCheckAnswer(true)}
       />
 
-          
+
+
         </>
       )}
 
@@ -74,12 +82,28 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
         textColor="text-white"
         onClick={() => onCheckAnswer(false)}
       />
-          <Button
+
+
+{doubleChecked ?  <Button
         text="Umiem"
         backgroundColor="m-2 bg-green-600 hover:bg-green-700 w-48 py-8"
         textColor="text-white"
-        onClick={() => onCheckAnswer(true)}
-      />
+        onClick={() => {
+          setDoubleChecked(0)
+          onCheckAnswer(true)
+        }
+        }
+      /> : <Button
+      text="Sprawdz"
+      backgroundColor="m-2 bg-green-600 hover:bg-green-700 w-48 py-8"
+      textColor="text-white"
+      onClick={() => setDoubleChecked(1)}
+    />
+
+} 
+
+
+
            </div>
   
 

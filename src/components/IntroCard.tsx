@@ -16,14 +16,27 @@ const IntroCard: React.FC<IntroCardProps> = ({
 
 }) => {
   return (
-    <div className="grid gap-4 grid-cols-2 w-full pt-5 pb-5">
+    <div className=" max-w-[500] grid gap-4 grid-cols-2 pt-5 pb-5">
      
-    
+     <Button
+        text="Test"
+        backgroundColor="bg-emerald-800 hover:bg-emerald-900 py-8"
+        textColor="text-white"
+        textSize="text-2xl"
+        onClick={() => {
+          setStatus("active");
+          setMode("test");
+          console.log(mode);
+          startTimer()
+        }}
+      />
+
 
       <Button
         text="Learn"
-        backgroundColor="bg-green-600 hover:bg-green-700 py-8"
+        backgroundColor="bg-amber-400 hover:bg-emerald-900 py-8"
         textColor="text-white"
+        textSize="text-2xl"
         onClick={() => {
           setMode("learn");
           console.log(mode);
@@ -32,17 +45,6 @@ const IntroCard: React.FC<IntroCardProps> = ({
         }}
       />
 
-<Button
-        text="Test"
-        backgroundColor="bg-green-600 hover:bg-green-700 py-8"
-        textColor="text-white"
-        onClick={() => {
-          setStatus("active");
-          setMode("test");
-          console.log(mode);
-          startTimer()
-        }}
-      />
 
       
     </div>

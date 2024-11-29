@@ -64,6 +64,7 @@ const QuestionManager: React.FC<{
 
   const [prevquestion, setPrevquestion] =   useState<string | null>(null);
   const [showHint, setShowHint] = useState<boolean>(false);
+  const [doubleChecked, setDoubleChecked] = useState<number>(0);
 
 
   
@@ -73,22 +74,39 @@ const QuestionManager: React.FC<{
     console.log("User Answer:", userAnswer);
   }, [userAnswer]);
 
+
+  
+
+
   
 
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
 
-      console.log(event.key);
 
-      
       if (status === "active" && mode === "learn" && !isQuizFinished) {
+
+        
         if (event.key === "ArrowRight") {
-          handleCheckAnswer(true);
+
+          
+          if (doubleChecked){
+
+            setDoubleChecked(0)
+            handleCheckAnswer(true); 
+
+          } else { 
+            setDoubleChecked(1)}
+          
+          
+                 
+
         }
         if (event.key === "ArrowLeft") {
+          setDoubleChecked(0)
           handleCheckAnswer(false);
-        }
+        } 
       }
       
 
@@ -114,7 +132,7 @@ const QuestionManager: React.FC<{
     return () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
-  }, [status, mode]);
+  }, [status, mode, doubleChecked]);
 
     // Function to handle right swipe (e.g., load next question)
     const handleRightSwipe = () => {
@@ -285,6 +303,9 @@ const QuestionManager: React.FC<{
 
 
   const handleCheckAnswer = (result: boolean) => {
+
+   
+
     if (currentQuestion) {
 
     if (mode === "test") {
@@ -563,7 +584,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
   
 
   return (
-    <div className="flex flex-col items-center justify-center mb-6">
+    <div className="flex flex-col items-center pb-8 bg-emerald-600 min-h-screen content-start">
       {/* Timer Component */}
       
       <SwipeListener
@@ -574,7 +595,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
 
 
 <div className="timer">
-        <p className="text-sm text-gray-700 bg-gray-300 rounded-lg px-2 py-1" > {minutes}m {seconds}s</p>
+        <p className="text-xs text-gray-500 bg-gray-100 rounded-lg px-2 py-1" > {minutes}:{seconds}</p>
       </div>
     
       <Progress
@@ -625,6 +646,8 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
           inputRef={inputRef}
           status={status}
           mode={mode}
+          doubleChecked={doubleChecked}
+          setDoubleChecked={setDoubleChecked}
         />
       )}
 

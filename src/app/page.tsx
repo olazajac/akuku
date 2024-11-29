@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { fetchPosts } from "../lib/api"; // Make sure the path and function name are correct
+import '../styles/globals.css';
 
 const HomePage = () => {
   const [posts, setPosts] = useState<any[]>([]);

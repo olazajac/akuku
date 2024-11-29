@@ -4,6 +4,7 @@ interface ButtonProps {
   text: string; // Text displayed on the button
   backgroundColor?: string; // Custom background color
   textColor?: string; // Custom text color
+  textSize?: string;
   onClick?: () => void; // Custom onClick handler
   link?: string; // Optional link for navigation
   className?: string; // Additional custom classes
@@ -13,11 +14,12 @@ const Button: React.FC<ButtonProps> = ({
   text,
   backgroundColor = "bg-blue-500", // Default background color
   textColor = "text-white", // Default text color
+  textSize = "text-base",
   onClick,
   link,
   className = "",
 }) => {
-  const buttonClasses = `min-w-[120px] text-center rounded-lg transition-all shadow-xs ${backgroundColor} ${textColor} hover:shadow-2xl hover:shadow-blue-400 hover:-translate-y-px focus:outline-none focus:ring ${className}`;
+  const buttonClasses = `min-w-[120px] px-4 text-center rounded-lg transition-all shadow-2xs font-extrabold ${backgroundColor} ${textColor} ${textSize} hover:shadow-2xl  hover:-translate-y-px focus:outline-none focus:ring ${className}`;
 
   // If a link is provided, render a clickable anchor tag
   if (link) {

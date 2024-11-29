@@ -39,7 +39,7 @@ const QuestionLists: React.FC<QuestionListsProps> = ({
         {unansweredQuestions.map((q) => (
           <li
             key={q.index}
-            className="p-2 w-full border border-gray-200 bg-gray-100 align-middle justify-items-center rounded-md text-center"
+            className="p-4 w-full bg-emerald-500 align-middle justify-items-center rounded-md text-center text-white"
             onClick={(e) => {
               e.stopPropagation();
               onSpeakAnswer(q.odpowiedz);

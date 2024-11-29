@@ -57,39 +57,39 @@ const ScoreTable: React.FC<{
   return (
     <div className="mt-8">
       
-      <table className="table-auto border-collapse border border-gray-300 w-full">
+      <table className="table-auto border-collapse border border-emerald-300 w-full text-white">
         <thead>
           <tr>
-            <th className="border border-gray-300 px-4 py-2">Date</th>
-            <th className="border border-gray-300 px-4 py-2">Time</th>
-            <th className="border border-gray-300 px-4 py-2">Score</th>
-            <th className="border border-gray-300 px-4 py-2">Test ID</th>
-            <th className="border border-gray-300 px-4 py-2">Redo</th>
+            <th className="border border-emerald-300 px-4 py-2">Date</th>
+            <th className="border border-emerald-300 px-4 py-2">Time</th>
+            <th className="border border-emerald-300 px-4 py-2">Score</th>
+            {/* <th className="border border-gray-300 px-4 py-2">Test ID</th> */}
+            <th className="border border-emerald-300 px-4 py-2">Redo</th>
           </tr>
         </thead>
         <tbody>
           {filteredScores.map((entry, index) => (
             <React.Fragment key={index}>
               <tr>
-                <td className="border border-gray-300 px-4 py-2">{entry.date}</td>
-                <td className="border border-gray-300 px-4 py-2">{entry.time}</td>
-                <td className="border border-gray-300 px-4 py-2">{entry.score}%</td>
-                <td className="border border-gray-300 px-4 py-2">{entry.test_id}</td>
-                <td className="border border-gray-300 px-4 py-2">
+                <td className="border border-emerald-300 px-4 py-2">{entry.date}</td>
+                <td className="border border-emerald-300 px-4 py-2">{entry.time}</td>
+                <td className="border border-emerald-300 px-4 py-2">{entry.score}%</td>
+                {/* <td className="border border-gray-300 px-4 py-2">{entry.test_id}</td> */}
+                <td className="border border-emerald-300 px-4 py-2">
 
 
                 <Button
         text="Test"
-        backgroundColor="bg-gray-200 hover:bg-green-700 p-1 m-1"
-        textColor="text-gray-800"
+        backgroundColor="bg-emerald-500 hover:bg-green-700 p-1 m-1"
+        textColor="text-white"
         onClick={() => onRedoMistakes(entry.mistakes, "test")}
       />
 
 
 <Button
         text="Learn"
-        backgroundColor="bg-gray-200 hover:bg-green-700 p-1 m-1"
-        textColor="text-gray-800"
+        backgroundColor="bg-emerald-500 hover:bg-green-700 p-1 m-1"
+        textColor="text-white"
         onClick={() => onRedoMistakes(entry.mistakes, "learn")}
       />
 
@@ -99,8 +99,8 @@ const ScoreTable: React.FC<{
               {/* Display mistakes as a sublist */}
               {entry.mistakes && entry.mistakes.length > 0 && (
                 <tr>
-                  <td colSpan={5} className="border border-gray-300 px-4 py-2">
-                    <ul className="list-disc pl-5 list-none text-gray-500 text-xs">
+                  <td colSpan={5} className="border border-emerald-300 px-4 py-2">
+                    <ul className="list-disc pl-5 list-none text-white text-xs">
                       {entry.mistakes.map((mistake, mistakeIndex) => (
                         <li key={mistakeIndex}>
                           {mistake.pytanie} -   

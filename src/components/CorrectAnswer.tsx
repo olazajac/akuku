@@ -22,6 +22,9 @@ const CorrectAnswer: React.FC<CorrectCardProps> = ({
     };
   }, [setStatus]);
 
+
+  
+
   return (
     <div className="mb-4 p-4 border rounded-md shadow-md bg-red-100">
       <h2 className="text-lg font-semibold text-green-500">Good!</h2>
