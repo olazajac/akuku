@@ -683,7 +683,10 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
       {status === "intro" &&
       <ScoreTable testId={testId.toString()} onRedoMistakes={handleRedoMistakes} />}
 
-<Settings
+
+
+{
+'aaa' === 'bbb' && <> <Settings
         isRepeatChecked={isRepeatChecked}
         setIsRepeatChecked={setIsRepeatChecked}
       />
@@ -696,6 +699,10 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
         onSpeakAnswer={speakAnswer}
         status={status}
       />
+      </>
+      
+      }
+
 
 
     </div>
