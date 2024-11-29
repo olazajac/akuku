@@ -6,6 +6,7 @@ interface IntroCardProps {
   setMode: (mode: string) => void;
   setStatus: (status: string) => void;
   startTimer: () => void;
+  totalQuestions: number;
 }
 
 const IntroCard: React.FC<IntroCardProps> = ({
@@ -13,16 +14,19 @@ const IntroCard: React.FC<IntroCardProps> = ({
   setStatus,
   mode,
   startTimer,
+  totalQuestions,
 
 }) => {
   return (
-    <div className=" max-w-[500] grid gap-4 grid-cols-2 pt-5 pb-5">
+    <div className=" max-w-[500] flex flex-col items-center pt-5 pb-5 text-white">
+       <h2 className="text-6xl p-3">{totalQuestions}</h2>
+       <h1 className="text-xl p-2">Unit 3</h1>
      
-     <Button
+     <div>     <Button
         text="Test"
-        backgroundColor="bg-emerald-800 hover:bg-emerald-900 py-8"
+        backgroundColor="bg-emerald-800 hover:bg-emerald-900 py-8 w-full"
         textColor="text-white"
-        textSize="text-2xl"
+        textSize="text-xl"
         onClick={() => {
           setStatus("active");
           setMode("test");
@@ -34,16 +38,17 @@ const IntroCard: React.FC<IntroCardProps> = ({
 
       <Button
         text="Learn"
-        backgroundColor="bg-amber-400 hover:bg-emerald-900 py-8"
+        backgroundColor="bg-amber-400 hover:bg-emerald-900 py-8 w-full"
         textColor="text-white"
-        textSize="text-2xl"
+        textSize="text-xl"
         onClick={() => {
           setMode("learn");
           console.log(mode);
           setStatus("active");
           startTimer()
         }}
-      />
+      /></div>
+
 
 
       

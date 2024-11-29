@@ -584,7 +584,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
   
 
   return (
-    <div className="flex flex-col items-center pb-8 bg-emerald-600 min-h-screen content-start">
+    <div className="flex flex-col items-center  bg-emerald-600 min-h-screen content-start">
       {/* Timer Component */}
       
       <SwipeListener
@@ -592,10 +592,10 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
         onSwipeLeft={handleLeftSwipe} // Optional, only if you need left swipe handling
       />
 
-
+<div className="bg-emerald-900 text-white w-full p-4 flex flex-col justify-around content-center items-center">
 
 <div className="timer">
-        <p className="text-xs text-gray-500 bg-gray-100 rounded-lg px-2 py-1" > {minutes}:{seconds}</p>
+        <p className="text-xs text-center text-gray-500 bg-gray-100 rounded-lg px-2 py-1" > {minutes}:{seconds}</p>
       </div>
     
       <Progress
@@ -605,10 +605,15 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
         incorrectCount={getTotalErrorCount()} // Pass the sum of all errors
       />
 
-      <Settings
+      {/* <Settings
         isRepeatChecked={isRepeatChecked}
         setIsRepeatChecked={setIsRepeatChecked}
-      />
+      /> */}
+
+{!isQuizFinished && mode === 'learn' && (<Stopper status={status} onCheckAnswer={handleCheckAnswer} />)}
+</div>
+
+
          {showHint && <Hint correctAnswer = {currentQuestion?.odpowiedz} /> } 
       {status === "intro" && (
         <IntroCard
@@ -616,6 +621,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
           setMode={setMode}
           setStatus={handleStatusChange} // Updated this line
           startTimer={startTimer} // Use timer's start method
+          totalQuestions={allQuestions.length}
         />
       )}
 
@@ -648,12 +654,13 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
           mode={mode}
           doubleChecked={doubleChecked}
           setDoubleChecked={setDoubleChecked}
+          answear={currentQuestion.odpowiedz}
         />
       )}
 
 
 
-{!isQuizFinished && mode === 'learn' && (<Stopper status={status} onCheckAnswer={handleCheckAnswer} />)}
+
 
 {isQuizFinished && (
         <FinalScore
@@ -669,13 +676,13 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
       <div className="mt-4">
      
 
-
+{/* 
 
       <QuestionLists
         shuffledQuestions={shuffledQuestions}
         onSpeakAnswer={speakAnswer}
         status={status}
-      />
+      /> */}
 
      
 

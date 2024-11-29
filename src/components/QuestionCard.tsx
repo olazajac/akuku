@@ -11,6 +11,7 @@ interface QuestionCardProps {
   mode: string;
   doubleChecked: number;
   setDoubleChecked: (result: number) => void; 
+  answear: string;
 
 }
 
@@ -24,6 +25,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   mode,
   doubleChecked,
   setDoubleChecked,
+  answear,
 
 }) => {
   useEffect(() => {
@@ -35,8 +37,8 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   }, [status, inputRef, setUserAnswer]);
 
   return (
-    <div className="mb-4 p-4 ">
-      <h2 className="text-2xl text-white font-bold my-10 text-center">{question}</h2>
+    <div className="mb-4 p-4 w-full ">
+      <h2 className="text-2xl text-white font-bold my-10 text-center">{doubleChecked ? answear : question}</h2>
 
       {mode === "test" && (
         <>

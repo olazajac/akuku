@@ -35,17 +35,17 @@ const Stopper: React.FC<StopperProps> = ({ status, onCheckAnswer }) => {
   };
 
   return (
-    <div style={{ width: "400px", textAlign: "center", marginTop: "20px" }}>
+    <div className="w-full m-0 p-0" >
       <div
-        className="bg-[red] h-1"
+        className="bg-emerald-400 h-1"
         style={{
           width: ((counter - 1) / 10) * 100 + "%",
           transition: status === "active" ? "width 1s linear" : "none",
         }}
       ></div>
-      <p style={{ fontSize: "2rem", color: counter === 0 ? "red" : "black" }}>
+      {/* <p style={{ fontSize: "2rem", color: counter === 0 ? "red" : "black" }}>
         {counter}
-      </p>
+      </p> */}
       
     </div>
   );
