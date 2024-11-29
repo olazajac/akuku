@@ -605,10 +605,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
         incorrectCount={getTotalErrorCount()} // Pass the sum of all errors
       />
 
-      {/* <Settings
-        isRepeatChecked={isRepeatChecked}
-        setIsRepeatChecked={setIsRepeatChecked}
-      /> */}
+
 
 {!isQuizFinished && mode === 'learn' && (<Stopper status={status} onCheckAnswer={handleCheckAnswer} />)}
 </div>
@@ -676,13 +673,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
       <div className="mt-4">
      
 
-{/* 
 
-      <QuestionLists
-        shuffledQuestions={shuffledQuestions}
-        onSpeakAnswer={speakAnswer}
-        status={status}
-      /> */}
 
      
 
@@ -692,6 +683,19 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
       {status === "intro" &&
       <ScoreTable testId={testId.toString()} onRedoMistakes={handleRedoMistakes} />}
 
+<Settings
+        isRepeatChecked={isRepeatChecked}
+        setIsRepeatChecked={setIsRepeatChecked}
+      />
+
+
+
+
+<QuestionLists
+        shuffledQuestions={shuffledQuestions}
+        onSpeakAnswer={speakAnswer}
+        status={status}
+      />
 
 
     </div>
