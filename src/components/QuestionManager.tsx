@@ -405,13 +405,17 @@ const QuestionManager: React.FC<{
     setStatus(newStatus);
     if (newStatus === "active") {
       startTimer(); // Start the timer when status changes to active
-    }
+    } else if (newStatus === "finished") {
+      stopTimer(); // Start the timer when status changes to active
+    } 
   };
 
 
   useEffect(() => {
     // in order to save results in acf
     if (isQuizFinished && time > 0) {
+      setStatus('finished')
+      
       console.log("Quiz finished with total time:", time);
       handleTestCompletion(); // Ensure totalTime is finalized before calling
     }
@@ -521,7 +525,10 @@ const handleTestCompletion = () => {
 
   const results = {
     date: new Date().toISOString().split("T")[0],
-    time: `${minutes}:${seconds}`, // Use formatted time
+    time: `${(minutes ?? 0).toString().padStart(2, "0")}:${(seconds ?? 0).toString().padStart(2, "0")}`,
+
+    // time: `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`, // Ensure double-digit formatting
+    // time: '22',
     score: score,
     test_id: testId.toString(),
     mistakes: getFilteredErrorQuestions().map((question) => ({
