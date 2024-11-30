@@ -593,22 +593,22 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
       />
 
 <div className="bg-emerald-900 text-white w-full p-4 flex flex-col justify-around content-center items-center">
-
-<div className="timer">
-        <p className="text-xs text-center text-gray-500 bg-gray-100 rounded-lg px-2 py-1" > {minutes}:{seconds}</p>
-      </div>
-    
-      <Progress
+<Progress
         isRepeatChecked={isRepeatChecked}
         totalQuestions={allQuestions.length}
         guessedCount={getFilteredGuessedQuestions().length}
         incorrectCount={getTotalErrorCount()} // Pass the sum of all errors
+        seconds={seconds}
+        minutes={minutes}
       />
 
 
 
-{!isQuizFinished && mode === 'learn' && (<Stopper status={status} onCheckAnswer={handleCheckAnswer} />)}
+
+
 </div>
+
+{!isQuizFinished && mode === 'learn' && (<Stopper status={status} onCheckAnswer={handleCheckAnswer} initialCounter={15} />)}
 
 
          {showHint && <Hint correctAnswer = {currentQuestion?.odpowiedz} /> } 
@@ -685,8 +685,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
 
 
 
-{
-'aaa' === 'bbb' && <> <Settings
+  <> <Settings
         isRepeatChecked={isRepeatChecked}
         setIsRepeatChecked={setIsRepeatChecked}
       />
@@ -701,7 +700,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
       />
       </>
       
-      }
+      
 
 
 

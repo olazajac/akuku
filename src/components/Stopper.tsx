@@ -3,34 +3,60 @@ import React, { useEffect, useState } from "react";
 interface StopperProps {
   status: string;
   onCheckAnswer: (result: boolean) => void;
+  initialCounter?: number; // Allow the initial counter value to be passed as a prop
+
 }
 
-const Stopper: React.FC<StopperProps> = ({ status, onCheckAnswer }) => {
-  const [counter, setCounter] = useState(10);
+const Stopper: React.FC<StopperProps> = ({ status, onCheckAnswer, initialCounter=10, }) => {
+  const [counter, setCounter] = useState(initialCounter);
   const [isCounting, setIsCounting] = useState(false); // Control whether the countdown is active
+
+
+
 
   useEffect(() => {
     if (status === "active") {
+      setCounter(initialCounter); // Reset counter when activated
       setIsCounting(true);
+      
     } else {
       handleSkip();
     }
+  }, [status]);
 
-    if (counter > 0 && isCounting) {
-      const timer = setInterval(() => {
-        setCounter((prevCounter) => prevCounter - 1);
+
+
+
+
+  useEffect(() => {
+    if (isCounting && counter > 0) {
+
+
+      const stopertimer = setTimeout(() => {
+        setCounter((prevCounter) => (prevCounter !== undefined ? prevCounter - 1 : 0));
       }, 1000);
 
-      return () => clearInterval(timer); // Clear interval on component unmount or dependency change
+      return () => clearTimeout(stopertimer); // Clear timeout on component unmount or dependency change
     } else if (counter === 0) {
-      onCheckAnswer(false);
+
       setIsCounting(false);
-      setCounter(10); // Reset counter
+
+      const tooLate = setTimeout(() => {
+        onCheckAnswer(false); // Trigger on timeout
+      }, 100);
+
+      return () => clearTimeout(tooLate); // Clear timeout on component unmount or dependency change
+      
+      
     }
-  }, [counter, isCounting, status]);
+  }, [counter, isCounting]);
+
+
+
+
 
   const handleSkip = () => {
-    setCounter(10); // Reset counter
+    setCounter(initialCounter); // Reset counter
     setIsCounting(false); // Stop the countdown
   };
 
@@ -39,8 +65,9 @@ const Stopper: React.FC<StopperProps> = ({ status, onCheckAnswer }) => {
       <div
         className="bg-emerald-400 h-1"
         style={{
-          width: ((counter - 1) / 10) * 100 + "%",
-          transition: status === "active" ? "width 1s linear" : "none",
+          width: `${(!isCounting) ? 100 : 0}%`, // Dynamically calculate width based on initialCounter
+          
+          transition: status === "active" ? `width ${initialCounter}s linear`  : "none",
         }}
       ></div>
       {/* <p style={{ fontSize: "2rem", color: counter === 0 ? "red" : "black" }}>
