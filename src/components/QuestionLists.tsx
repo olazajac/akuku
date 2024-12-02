@@ -28,7 +28,7 @@ const QuestionLists: React.FC<QuestionListsProps> = ({
   );
 
   return (
-    <div className="mt-4">
+    <>
 
 
 {status === 'intro' &&  <> 
@@ -56,7 +56,7 @@ const QuestionLists: React.FC<QuestionListsProps> = ({
 
 
      
-    </div>
+    </>
   );
 };
 

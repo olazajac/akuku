@@ -25,7 +25,7 @@ const CorrectCard: React.FC<CorrectCardProps> = ({
       console.log("Auto advanced to next question."); // Debug: Confirm timeout triggers
       setStatus("active");
       clearTimeout(autoOff);
-    }, 8000000);
+    }, 800);
 
     
 
@@ -41,7 +41,7 @@ const CorrectCard: React.FC<CorrectCardProps> = ({
 
   return (
 
-    <div className="bg-green-100 p-4 w-full  flex flex-col items-center content-center  h-full "  onClick={() => {
+    <div className=" p-4 w-full  flex flex-col items-center content-center flex-grow "  onClick={() => {
       setStatus("active");
 
       // NewCurrentQuestion();

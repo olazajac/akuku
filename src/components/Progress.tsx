@@ -19,7 +19,7 @@ const Progress: React.FC<ProgressProps> = ({
   seconds,
 }) => {
   const totalAnswered = guessedCount;
-  const progressPercentage = (totalAnswered / totalQuestions) * 100;
+  const progressPercentage =!isRepeatChecked ? (totalAnswered / totalQuestions) * 100 : ((totalAnswered+incorrectCount) / totalQuestions) * 100 ;
   const questionsLeft = !isRepeatChecked ? totalQuestions - totalAnswered : totalQuestions - totalAnswered -incorrectCount ;
 
   return (

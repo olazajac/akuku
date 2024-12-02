@@ -158,7 +158,11 @@ const QuestionManager: React.FC<{
             } else { 
               setDoubleChecked(1)}
            
-        };
+        }
+
+        
+
+     
           }
      
   
@@ -169,6 +173,7 @@ const QuestionManager: React.FC<{
       setDoubleChecked(0)
         handleCheckAnswer(false);
       }
+    
     };
 
 
@@ -571,7 +576,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
         onSwipeLeft={handleLeftSwipe} // Optional, only if you need left swipe handling
       />
 
-<div className="bg-emerald-900 text-white w-full p-4 flex flex-col justify-around content-center items-center overflow-y-hidden">
+<div className="bg-emerald-900 text-white w-full p-4 flex flex-col justify-around content-center items-center  ">
 <Progress
         isRepeatChecked={isRepeatChecked}
         totalQuestions={allQuestions.length}
@@ -649,15 +654,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
 
 
       
-      <div className="mt-4">
-     
 
-
-
-     
-
-
-      </div>
 
       {status === "intro" &&
       <>

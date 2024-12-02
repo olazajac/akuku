@@ -8,7 +8,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="overflow-x-none">
-      <body className="overflow-x-none h-dvh">{children}</body>
+      <body className="min-h-screen overflow-x-none flex flex-col">{children}</body>
     </html>
   );
 }

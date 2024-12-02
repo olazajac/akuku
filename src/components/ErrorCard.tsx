@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 
 
 interface ErrorCardProps {
@@ -15,9 +16,26 @@ const ErrorCard: React.FC<ErrorCardProps> = ({
   speakAnswer,
   mode
 }) => {
+
+  useEffect(() => {
+    const autoOff = setTimeout(() => {
+      console.log("Auto advanced to next question."); // Debug: Confirm timeout triggers
+      setStatus("active");
+      clearTimeout(autoOff);
+    }, 8000);
+
+    
+
+    return () => {
+      clearTimeout(autoOff);
+    };
+  }, [setStatus]);
+
+
+  
     return (
       <div
-        className="bg-red-100 p-4 w-full  flex flex-col items-center content-center  h-full "
+        className="bg-sky-900 p-4 w-full  flex flex-col items-center content-center  flex-grow "
         onClick={() => {
           setStatus("active");
         } }
