@@ -21,8 +21,8 @@ const QuestionLists: React.FC<QuestionListsProps> = ({
   onSpeakAnswer,
   status,
 }) => {
-  const guessedQuestions = shuffledQuestions.filter((q) => q.guessed === 1);
-  const errorQuestions = shuffledQuestions.filter((q) => q.errors > 0);
+  // const guessedQuestions = shuffledQuestions.filter((q) => q.guessed === 1);
+  // const errorQuestions = shuffledQuestions.filter((q) => q.errors > 0);
   const unansweredQuestions = shuffledQuestions.filter(
     (q) => q.hot === 0 && q.guessed === 0
   );

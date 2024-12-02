@@ -32,7 +32,7 @@ const CorrectCard: React.FC<CorrectCardProps> = ({
     return () => {
       clearTimeout(autoOff);
     };
-  }, []);
+  }, [setStatus]);
 
 
 

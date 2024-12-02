@@ -1,3 +1,4 @@
+import { on } from "events";
 import React, { useEffect, useState } from "react";
 
 interface StopperProps {
@@ -22,7 +23,7 @@ const Stopper: React.FC<StopperProps> = ({ status, onCheckAnswer, initialCounter
     } else {
       handleSkip();
     }
-  }, [status]);
+  }, [status, setCounter, setIsCounting]);
 
 
 
@@ -49,7 +50,7 @@ const Stopper: React.FC<StopperProps> = ({ status, onCheckAnswer, initialCounter
       
       
     }
-  }, [counter, isCounting]);
+  }, [counter, isCounting, setCounter]);
 
 
 
