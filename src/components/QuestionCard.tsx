@@ -76,11 +76,11 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
       )}
 
       {mode === "learn" && (
-        <div className="flex flex-row items-center">
+        <div className="max-w-full flex flex-row items-center">
           
           <Button
         text="Nie umiem"
-        backgroundColor="m-2 bg-emerald-700 hover:bg-red-700 w-48 py-8"
+        backgroundColor="max-w-full m-2 bg-emerald-700 hover:bg-red-700 w-48 py-8"
         textColor="text-white"
         onClick={() => { 
           setDoubleChecked(0)
@@ -94,7 +94,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
 
 {doubleChecked ?  <Button
         text="Umiem"
-        backgroundColor="m-2 bg-amber-500 hover:bg-green-700 w-48 py-8"
+        backgroundColor="max-w-full m-2 bg-amber-500 hover:bg-green-700 w-48 py-8"
         textColor="text-white"
         onClick={() => {
           setDoubleChecked(0)
@@ -103,7 +103,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
         }
       /> : <Button
       text="Sprawdz"
-      backgroundColor="m-2 bg-amber-500 hover:bg-green-700 w-48 py-8"
+      backgroundColor="max-w-full m-2 bg-amber-500 hover:bg-green-700 w-48 py-8"
       textColor="text-white"
       onClick={() => setDoubleChecked(1)}
     />
