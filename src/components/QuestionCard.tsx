@@ -82,7 +82,13 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
         text="Nie umiem"
         backgroundColor="m-2 bg-emerald-700 hover:bg-red-700 w-48 py-8"
         textColor="text-white"
-        onClick={() => onCheckAnswer(false)}
+        onClick={() => { 
+          setDoubleChecked(0)
+          onCheckAnswer(false)
+        }
+
+
+        }
       />
 
 

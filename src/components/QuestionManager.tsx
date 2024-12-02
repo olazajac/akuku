@@ -32,15 +32,15 @@ type Question = {
   index: number; // Unique index
 };
 
-interface Results {
-  date: string;
-  time: string;
-  score: string;
-  test_id: string;
+interface NewEntry {
+  date: string; // e.g., "2024-11-30"
+  time: string; // e.g., "00:13"
+  score: string; // e.g., "69"
+  test_id: string; // e.g., "24620"
   mistakes: {
-    pytanie: string;
-    odpowiedz: string;
-  }[];
+    pytanie: string; // The question text
+    odpowiedz: string; // The correct answer
+  }[]; // An array of mistakes
 }
 
 
@@ -136,13 +136,27 @@ const QuestionManager: React.FC<{
 
     // Function to handle right swipe (e.g., load next question)
     const handleRightSwipe = () => {
-      console.log("Right swipe detected");
-    };
+
+          if(status === 'active'){
+            if (doubleChecked){
+
+              setDoubleChecked(0)
+              handleCheckAnswer(true); 
+    
+            } else { 
+              setDoubleChecked(1)}
+           
+        };
+          }
+     
   
     // Function to handle left swipe (you can add other logic here)
     const handleLeftSwipe = () => {
-      console.log("Left swipe detected");
-      // Implement logic for left swipe if needed
+
+      if(status === 'active'){
+      setDoubleChecked(0)
+        handleCheckAnswer(false);
+      }
     };
 
 
@@ -425,90 +439,33 @@ const QuestionManager: React.FC<{
 
 
 
-const saveTestResults = async (results: Results) => {
-
-  const pageId = 24737; // Your page ID
-
-    // Validate score before proceeding
-    if (isNaN(Number(results.score))) {
-      // console.error("Invalid score: NaN. Skipping API call.");
-      return; // Exit the function early
-    }
-
+const appendNewEntry = async (pageId: number, newEntry) => {
   try {
-    // Step 1: Fetch the existing data
-    const fetchResponse = await fetch(`https://akuku.club/wp-json/wp/v2/pages/${pageId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Basic " + btoa("ola:F0JP 6SLF Dk6n JaMJ Jr3O v1lj"), // Replace with your credentials
-      },
-    });
-
-    if (!fetchResponse.ok) {
-      throw new Error(`HTTP error fetching existing data! Status: ${fetchResponse.status}`);
-    }
-    
-    const fetchResult = await fetchResponse.json();
-    
-    // Step 1: Retrieve existing rows or initialize empty arrays
-    const existingEntries = fetchResult.acf?.single_entry || []; // For main repeater
-    const existingMistakes = fetchResult.acf?.mistakes || []; // For mistakes repeater
-    
-    // Step 2: Prepare new entry for 'single_entry'
-    const newEntry = {
-      date: results.date,
-      time: results.time,
-      score: results.score,
-      test_id: results.test_id,
-      mistakes: results.mistakes.map((mistake) => ({
-        pytanie: mistake.pytanie,
-        odpowiedz: mistake.odpowiedz,
-        
-      })), // Map mistakes into the proper structure
-    };
-    
-    // Step 3: Prepare updated mistakes (append new ones)
-    const updatedMistakes = [
-      ...existingMistakes,
-      ...results.mistakes.map((mistake) => ({
-        pytanie: mistake.pytanie,
-        odpowiedz: mistake.odpowiedz,
-      })),
-    ];
-    
-    // Step 4: Prepare the updated data payload
-    const postData = {
-      acf: {
-        single_entry: [...existingEntries, newEntry], // Add the new entry to single_entry
-        mistakes: updatedMistakes, // Update the mistakes field with new entries
-      },
-    };
-    
-    console.log("Payload being sent:", JSON.stringify(postData, null, 2)); // Debugging payload
-    
-
-    const updateResponse = await fetch(`https://akuku.club/wp-json/wp/v2/pages/${pageId}`, {
+    const response = await fetch("https://akuku.club/wp-json/custom/v1/append_entry", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Basic " + btoa("ola:F0JP 6SLF Dk6n JaMJ Jr3O v1lj"), // Replace with your credentials
+        Authorization: "Basic " + btoa("ola:F0JP 6SLF Dk6n JaMJ Jr3O v1lj"), // 
       },
-      body: JSON.stringify(postData),
+      body: JSON.stringify({
+        page_id: pageId,
+        new_entry: newEntry,
+      }),
     });
 
-    if (!updateResponse.ok) {
-      throw new Error(`HTTP error updating data! Status: ${updateResponse.status}`);
+    if (!response.ok) {
+      throw new Error(`Failed to append entry. Status: ${response.status}`);
     }
 
-    const updateResult = await updateResponse.json();
-    console.log("Test results appended successfully:", updateResult);
+    const result = await response.json();
+    console.log("Successfully appended entry:", result);
   } catch (error) {
-    console.error("Failed to append test results:", error);
+    console.error("Error appending entry:", error);
   }
 };
 
   
+
   
 
   
@@ -538,7 +495,10 @@ const handleTestCompletion = () => {
   };
 
   console.log("Test completion data:", results); // Debugging log
-  saveTestResults(results);
+  // saveTestResults(results);
+
+  // Append only the new entry
+appendNewEntry(24737, results);
 };
 
 
