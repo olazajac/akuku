@@ -55,9 +55,9 @@ const ScoreTable: React.FC<{
   }
 
   return (
-    <div className="mt-8">
+    <div className="mt-8 p-3">
       
-      <table className="table-auto border-collapse border border-emerald-300 w-full text-white">
+      <table className="table-auto border-collapse border border-emerald-300 w-full text-white text-left ">
         <thead>
           <tr>
             <th className="border border-emerald-300 px-4 py-2">Date</th>
@@ -76,6 +76,7 @@ const ScoreTable: React.FC<{
                 <td className="border border-emerald-300 px-4 py-2">{entry.score}%</td>
                 {/* <td className="border border-gray-300 px-4 py-2">{entry.test_id}</td> */}
                 <td className="border border-emerald-300 px-4 py-2">
+                {entry.mistakes.length} - 
 
 
                 <Button
@@ -96,8 +97,8 @@ const ScoreTable: React.FC<{
                  
                 </td>
               </tr>
-              {/* Display mistakes as a sublist */}
-              {entry.mistakes && entry.mistakes.length > 0 && (
+      
+              {/* {entry.mistakes && entry.mistakes.length > 0 && (
                 <tr>
                   <td colSpan={5} className="border border-emerald-300 px-4 py-2">
                     <ul className="list-disc pl-5 list-none text-white text-xs">
@@ -110,7 +111,7 @@ const ScoreTable: React.FC<{
                     </ul>
                   </td>
                 </tr>
-              )}
+              )} */}
             </React.Fragment>
           ))}
         </tbody>

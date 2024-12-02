@@ -33,7 +33,7 @@ const HomePage = () => {
     return <div className="text-center text-red-500">Failed to load posts</div>;
 
   return (
-    <div className=" bg-blue-500 container mx-auto p-4">
+    <div className=" container mx-auto p-4">
       <h1 className="text-4xl font-bold text-center mb-8">Test Posts</h1>
       <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {posts.map((post) => (

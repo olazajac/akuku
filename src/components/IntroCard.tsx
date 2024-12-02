@@ -22,7 +22,7 @@ const IntroCard: React.FC<IntroCardProps> = ({
        <h2 className="text-6xl p-3">{totalQuestions}</h2>
        <h1 className="text-xl p-2">Unit 3</h1>
      
-     <div className="flex flex-row gap-3">     <Button
+     <div className="flex w-full max-w-[800px] flex-row p-2 gap-3">     <Button
         text="Test"
         backgroundColor="bg-emerald-800 hover:bg-emerald-900 p-8 w-full"
         textColor="text-white"

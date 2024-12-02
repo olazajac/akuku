@@ -80,7 +80,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           
           <Button
         text="Nie umiem"
-        backgroundColor="max-w-full m-2 bg-red-600 hover:bg-red-700 w-48 py-8"
+        backgroundColor="max-w-full m-2 bg-emerald-900 hover:bg-emerald-900 w-48 py-8"
         textColor="text-white"
         onClick={() => { 
           setDoubleChecked(0)

@@ -34,7 +34,7 @@ const QuestionLists: React.FC<QuestionListsProps> = ({
 {status === 'intro' &&  <> 
 
       
-      <ul className="flex flex-col mt-2 gap-4">
+      <ul className="flex flex-col mt-2 gap-4 p-3">
         {unansweredQuestions.map((q) => (
           <li
             key={q.index}

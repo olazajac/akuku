@@ -13,6 +13,7 @@ import Stopper from "./Stopper";
 import ScoreTable from "./ScoreTable";
 import { useTimer } from "../hooks/useTimer";
 import QuestionLists from "./QuestionLists"; // Import the new component
+import Image from "next/image";
 
 
 
@@ -563,7 +564,16 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
         onSwipeLeft={handleLeftSwipe} // Optional, only if you need left swipe handling
       />
 
-<div className="bg-emerald-900 text-white w-full p-4 flex flex-col justify-around content-center items-center  ">
+<div className="bg-emerald-700 text-white w-full p-4 flex flex-col justify-around content-center items-center  ">
+
+<Image
+        src="/images/logo.svg" // Path relative to the `public` folder
+        alt="Description of image"
+        width={50} // Specify width
+        height={50} // Specify height
+        className="justify-self-start mr-auto"
+      />
+
 <Progress
         isRepeatChecked={isRepeatChecked}
         totalQuestions={allQuestions.length}

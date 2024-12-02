@@ -24,7 +24,7 @@ const Progress: React.FC<ProgressProps> = ({
 
   return (
     <div className="w-full p-1 ">
-        <div className="w-full bg-emerald-700 rounded-full h-1 mb-4">
+        <div className="w-full bg-emerald-800 rounded-full h-1 mb-4">
         <div
           className="bg-emerald-500 h-1 rounded-full"
           style={{ width: `${progressPercentage}%` }}
