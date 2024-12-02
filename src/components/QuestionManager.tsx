@@ -571,7 +571,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
         onSwipeLeft={handleLeftSwipe} // Optional, only if you need left swipe handling
       />
 
-<div className="bg-emerald-900 text-white w-full p-4 flex flex-col justify-around content-center items-center">
+<div className="bg-emerald-900 text-white w-full p-4 flex flex-col justify-around content-center items-center overflow-y-hidden">
 <Progress
         isRepeatChecked={isRepeatChecked}
         totalQuestions={allQuestions.length}

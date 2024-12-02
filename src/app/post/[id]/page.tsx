@@ -34,7 +34,7 @@ const SinglePost = () => {
   if (!post) return <div>Post not found</div>;
 
   return (
-    <div className="h-full bg-emerald-400">
+    <div className="h-full bg-emerald-400 ">
       {/* <h1 className="text-2xl font-bold">{post.title.rendered}</h1>
       <p className="mb-4">{post.acf.test.length} Questions</p> */}
 
