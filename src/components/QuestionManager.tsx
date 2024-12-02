@@ -589,7 +589,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
 
 </div>
 
-{!isQuizFinished && mode === 'learn' && (<Stopper status={status} onCheckAnswer={handleCheckAnswer} initialCounter={15} />)}
+{!isQuizFinished && mode === 'learn' && (<Stopper status={status} onCheckAnswer={handleCheckAnswer} initialCounter={150} />)}
 
 
          {showHint && <Hint correctAnswer = {currentQuestion?.odpowiedz} /> } 
