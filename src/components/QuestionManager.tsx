@@ -17,12 +17,6 @@ import QuestionLists from "./QuestionLists"; // Import the new component
 
 
 
- 
-
-
-
-
-
 type Question = {
   pytanie: string; // The question text
   odpowiedz: string; // The correct answer
@@ -32,16 +26,6 @@ type Question = {
   index: number; // Unique index
 };
 
-// interface Results {
-//   date: string;
-//   time: string;
-//   score: string;
-//   test_id: string;
-//   mistakes: {
-//     pytanie: string;
-//     odpowiedz: string;
-//   }[];
-// }
 
 interface NewEntry {
   date: string; // e.g., "2024-11-30"
@@ -53,10 +37,6 @@ interface NewEntry {
     odpowiedz: string; // The correct answer
   }[]; // An array of mistakes
 }
-
-
-
-
 
 
 const QuestionManager: React.FC<{
@@ -78,17 +58,24 @@ const QuestionManager: React.FC<{
   const [showHint, setShowHint] = useState<boolean>(false);
   const [doubleChecked, setDoubleChecked] = useState<number>(0);
 
-
-  
   const {  time, startTimer, stopTimer, minutes, seconds } = useTimer();
 
-  useEffect(() => {
-    console.log("User Answer:", userAnswer);
-  }, [userAnswer]);
 
 
   
+  useEffect(() => {
+    // Add or remove `overflow-y-hidden` based on status
+    if (status === "active" || status === "error" || status === "correct") {
+      document.body.classList.add("overflow-y-hidden");
+    } else {
+      document.body.classList.remove("overflow-y-hidden");
+    }
 
+    // Cleanup on unmount
+    return () => {
+      document.body.classList.remove("overflow-y-hidden");
+    };
+  }, [status]);
 
   
 
