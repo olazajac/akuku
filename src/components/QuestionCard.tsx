@@ -38,7 +38,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
 
   return (
     <div className="p-4 w-full  flex flex-col items-center content-center flex-grow ">
-      <h2 className="text-2xl text-white font-bold my-10 text-center">{doubleChecked ? answear : question}</h2>
+      <h2 className="text-2xl text-white font-bold my-10 text-center mt-[15vh] mb-[15vh]">{doubleChecked ? answear : question}</h2>
 
       {mode === "test" && (
         <>
