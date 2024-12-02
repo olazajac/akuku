@@ -660,14 +660,17 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
       </div>
 
       {status === "intro" &&
-      <ScoreTable testId={testId.toString()} onRedoMistakes={handleRedoMistakes} />}
+      <>
+      <Settings
+          isRepeatChecked={isRepeatChecked}
+          setIsRepeatChecked={setIsRepeatChecked} />
+      <ScoreTable testId={testId.toString()} onRedoMistakes={handleRedoMistakes} />
+          </>
+      }
 
 
 
-  <> <Settings
-        isRepeatChecked={isRepeatChecked}
-        setIsRepeatChecked={setIsRepeatChecked}
-      />
+  <> 
 
 
 
