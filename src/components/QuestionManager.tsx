@@ -32,6 +32,17 @@ type Question = {
   index: number; // Unique index
 };
 
+// interface Results {
+//   date: string;
+//   time: string;
+//   score: string;
+//   test_id: string;
+//   mistakes: {
+//     pytanie: string;
+//     odpowiedz: string;
+//   }[];
+// }
+
 interface NewEntry {
   date: string; // e.g., "2024-11-30"
   time: string; // e.g., "00:13"
@@ -42,6 +53,7 @@ interface NewEntry {
     odpowiedz: string; // The correct answer
   }[]; // An array of mistakes
 }
+
 
 
 
@@ -439,7 +451,7 @@ const QuestionManager: React.FC<{
 
 
 
-const appendNewEntry = async (pageId: number, newEntry) => {
+const appendNewEntry = async (pageId: number, newEntry: NewEntry) => {
   try {
     const response = await fetch("https://akuku.club/wp-json/custom/v1/append_entry", {
       method: "POST",
