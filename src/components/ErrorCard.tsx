@@ -17,7 +17,7 @@ const ErrorCard: React.FC<ErrorCardProps> = ({
 }) => {
     return (
       <div
-        className="mb-4 p-4 w-full  flex flex-col items-center content-center  h-full "
+        className="bg-red-100 p-4 w-full  flex flex-col items-center content-center  h-full "
         onClick={() => {
           setStatus("active");
         } }

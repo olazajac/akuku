@@ -25,7 +25,7 @@ const CorrectCard: React.FC<CorrectCardProps> = ({
       console.log("Auto advanced to next question."); // Debug: Confirm timeout triggers
       setStatus("active");
       clearTimeout(autoOff);
-    }, 800);
+    }, 8000000);
 
     
 
@@ -37,15 +37,11 @@ const CorrectCard: React.FC<CorrectCardProps> = ({
 
 
 
-    
-
-
-
 
 
   return (
 
-    <div className="mb-4 p-4 w-full flex flex-col items-center content-center"  onClick={() => {
+    <div className="bg-green-100 p-4 w-full  flex flex-col items-center content-center  h-full "  onClick={() => {
       setStatus("active");
 
       // NewCurrentQuestion();
@@ -57,15 +53,15 @@ const CorrectCard: React.FC<CorrectCardProps> = ({
 
       <h2 className="text-2xl text-emerald-800 text-white font-bold my-10 text-center">{prevquestion}</h2>
 
-      <div className="inset-0 flex items-center justify-center top-[-600px]"> 
+
 <Player
   autoplay
   loop={false}
   src="/animations/success.json" // Path to the animation file
-  style={{ height: "550px", width: "550px" }}
+  style={{ maxWidth: "100%" }}
 
 />
- </div>
+ 
 
 
 

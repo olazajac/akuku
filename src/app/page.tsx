@@ -33,13 +33,13 @@ const HomePage = () => {
     return <div className="text-center text-red-500">Failed to load posts</div>;
 
   return (
-    <div className="container mx-auto p-4">
+    <div className=" bg-blue-500 container mx-auto p-4">
       <h1 className="text-4xl font-bold text-center mb-8">Test Posts</h1>
       <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {posts.map((post) => (
           <li
             key={post.id}
-            className="bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+            className="border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
           >
             <Link href={`/post/${post.id}`} className="block p-4">
               <h2 className="text-xl font-semibold text-blue-600 hover:underline">

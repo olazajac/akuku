@@ -563,7 +563,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
   
 
   return (
-    <div className="flex flex-col items-center  bg-emerald-600 min-h-screen content-start">
+    <>
       {/* Timer Component */}
       
       <SwipeListener
@@ -686,7 +686,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
 
 
 
-    </div>
+    </>
   );
 };
 
