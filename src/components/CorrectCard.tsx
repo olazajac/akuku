@@ -25,7 +25,7 @@ const CorrectCard: React.FC<CorrectCardProps> = ({
       console.log("Auto advanced to next question."); // Debug: Confirm timeout triggers
       setStatus("active");
       clearTimeout(autoOff);
-    }, 800);
+    }, 400);
 
     
 
@@ -51,7 +51,7 @@ const CorrectCard: React.FC<CorrectCardProps> = ({
 
 
 
-      <h2 className="text-2xl text-emerald-800 text-white font-bold my-10 text-center">{prevquestion}</h2>
+      <h2 className="text-[50px] text-emerald-800 font-bold my-10 text-center">{prevquestion}</h2>
 
 
 <Player

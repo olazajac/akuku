@@ -23,10 +23,10 @@ const Progress: React.FC<ProgressProps> = ({
   const questionsLeft = !isRepeatChecked ? totalQuestions - totalAnswered : totalQuestions - totalAnswered -incorrectCount ;
 
   return (
-    <div className="w-full p-1 ">
-        <div className="w-full bg-emerald-800 rounded-full h-1 mb-4">
+    <div className="w-full p-1 text-gray-900 ">
+        <div className="w-full bg-gray-100 rounded-full h-1 mb-4">
         <div
-          className="bg-emerald-500 h-1 rounded-full"
+          className="bg-gray-400 h-1 rounded-full"
           style={{ width: `${progressPercentage}%` }}
         ></div>
       </div>
@@ -35,7 +35,7 @@ const Progress: React.FC<ProgressProps> = ({
         <p className="text-sm "> {questionsLeft} / {totalQuestions}</p>
 
         <div className="timer">
-        <p className="text-xs w-[100px] text-center text-emerald-500 bg-emerald-800 rounded-lg px-2 py-1" > {minutes}:{seconds}</p>
+        <p className="text-xs w-[100px] text-center bg-gray-100 rounded-lg px-2 py-1" > {minutes}:{seconds}</p>
       </div>
 
       <div>  <p className="text-sm ">{guessedCount} - <span>{incorrectCount}</span></p>

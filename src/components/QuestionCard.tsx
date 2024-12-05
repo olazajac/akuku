@@ -12,6 +12,7 @@ interface QuestionCardProps {
   doubleChecked: number;
   setDoubleChecked: (result: number) => void; 
   answear: string;
+  speakAnswer: (status: string) => void;
 
 }
 
@@ -26,6 +27,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   doubleChecked,
   setDoubleChecked,
   answear,
+  speakAnswer,
 
 }) => {
   useEffect(() => {
@@ -38,7 +40,8 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
 
   return (
     <div className="p-4 w-full  flex flex-col items-center content-center flex-grow ">
-      <h2 className="text-2xl text-white font-bold my-10 text-center mt-[15vh] mb-[15vh]">{doubleChecked ? answear : question}</h2>
+      <h2 className="text-[50px] text-gray-900 font-bold my-10 text-center mt-[15vh] mb-[15vh]">{question}  {doubleChecked ? ' - ' + answear : ''}</h2>
+
 
       {mode === "test" && (
         <>
@@ -105,7 +108,9 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
       text="Sprawdz"
       backgroundColor="max-w-full m-2 bg-green-500 hover:bg-green-700 w-48 py-8"
       textColor="text-white"
-      onClick={() => setDoubleChecked(1)}
+      onClick={() => {setDoubleChecked(1)
+                      speakAnswer(answear);
+      }}
     />
 
 } 

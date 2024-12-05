@@ -34,17 +34,18 @@ const QuestionLists: React.FC<QuestionListsProps> = ({
 {status === 'intro' &&  <> 
 
       
-      <ul className="flex flex-col mt-2 gap-4 p-3">
+      <ul className="flex flex-col mt-2 gap-4 p-3 text-emerald-900 max-w-[400px] align-middle justify-items-center m-auto">
         {unansweredQuestions.map((q) => (
           <li
             key={q.index}
-            className="p-4 bg-emerald-500 align-middle justify-items-center rounded-md text-center text-white"
+            className="p-4 bg-gray-200 align-middle justify-items-center rounded-md text-center"
             onClick={(e) => {
               e.stopPropagation();
               onSpeakAnswer(q.odpowiedz);
             }}
           >
-            {q.pytanie} - {q.odpowiedz}
+            {q.pytanie} 
+            <p> {q.odpowiedz} </p> 
           </li>
         ))}
       </ul>

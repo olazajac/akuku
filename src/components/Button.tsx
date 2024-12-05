@@ -19,7 +19,7 @@ const Button: React.FC<ButtonProps> = ({
   link,
   className = "",
 }) => {
-  const buttonClasses = ` text-center rounded-lg transition-all shadow-2xs font-extrabold ${backgroundColor} ${textColor} ${textSize} hover:shadow-2xl  hover:-translate-y-px focus:outline-none focus:ring ${className}`;
+  const buttonClasses = ` text-center rounded-lg transition-all shadow-2xs  ${backgroundColor} ${textColor} ${textSize} hover:shadow-2xl  hover:-translate-y-px focus:outline-none focus:ring ${className}`;
 
   // If a link is provided, render a clickable anchor tag
   if (link) {

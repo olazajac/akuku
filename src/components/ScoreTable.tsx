@@ -47,71 +47,69 @@ const ScoreTable: React.FC<{
   const filteredScores = scores.filter((entry) => entry.test_id === testId).reverse();
 
   if (loading) {
-    return <p>Loading scores...</p>;
+    return  <div className="text-center w-full h-full justify-center align-center" > <p>Loading scores...</p> </div>;
   }
 
   if (filteredScores.length === 0) {
     return <p>No scores available for this test.</p>;
   }
 
+  const tableStyles = "bg-gray-200 rounded-lg border border-white border-xl px-4 py-2 text-xs";
+  
+
   return (
     <div className="mt-8 p-3">
       
-      <table className="table-auto border-collapse border border-emerald-300 w-full text-white text-left ">
+      <table className="table-auto border-collapse border border-gray-100 rounded-md w-[500px] max-w-full m-auto text-gray-700 text-left ">
         <thead>
           <tr>
-            <th className="border border-emerald-300 px-4 py-2">Date</th>
-            <th className="border border-emerald-300 px-4 py-2">Time</th>
-            <th className="border border-emerald-300 px-4 py-2">Score</th>
+            <th className={tableStyles}>Date</th>
+            <th className={tableStyles}>Time</th>
+            <th className={tableStyles}>Score</th>
             {/* <th className="border border-gray-300 px-4 py-2">Test ID</th> */}
-            <th className="border border-emerald-300 px-4 py-2">Redo</th>
+            <th className={tableStyles}>Mistakes</th>
           </tr>
         </thead>
         <tbody>
           {filteredScores.map((entry, index) => (
             <React.Fragment key={index}>
               <tr>
-                <td className="border border-emerald-300 px-4 py-2">{entry.date}</td>
-                <td className="border border-emerald-300 px-4 py-2">{entry.time}</td>
-                <td className="border border-emerald-300 px-4 py-2">{entry.score}%</td>
+                <td className={tableStyles}>{entry.date}</td>
+                <td className={tableStyles}>{entry.time}</td>
+                <td className={tableStyles}>{entry.score}%</td>
                 {/* <td className="border border-gray-300 px-4 py-2">{entry.test_id}</td> */}
-                <td className="border border-emerald-300 px-4 py-2">
-                {entry.mistakes.length} - 
+                <td className={tableStyles}>
+                
 
-
-                <Button
-        text="Test"
-        backgroundColor="bg-emerald-500 hover:bg-green-700 p-1 m-1"
-        textColor="text-white"
-        onClick={() => onRedoMistakes(entry.mistakes, "test")}
-      />
-
-
-<Button
-        text="Learn"
-        backgroundColor="bg-emerald-500 hover:bg-green-700 p-1 m-1"
-        textColor="text-white"
-        onClick={() => onRedoMistakes(entry.mistakes, "learn")}
-      />
+{entry.mistakes &&  <> <Button
+                    text="Test"
+                    backgroundColor="bg-gray-300 hover:bg-gray-700 py-2 px-4 m-1"
+                    textColor="text-white"
+                    onClick={() => onRedoMistakes(entry.mistakes, "test")} /><Button
+                      text="Learn"
+                      backgroundColor="bg-gray-300 hover:bg-gray-700 py-2 px-4 m-1"
+                      textColor="text-white"
+                      onClick={() => onRedoMistakes(entry.mistakes, "learn")} /> - {entry.mistakes?.length} </>  }
+                
 
                  
                 </td>
               </tr>
       
-              {/* {entry.mistakes && entry.mistakes.length > 0 && (
+               {entry.mistakes && entry.mistakes.length > 0 && (
                 <tr>
-                  <td colSpan={5} className="border border-emerald-300 px-4 py-2">
-                    <ul className="list-disc pl-5 list-none text-white text-xs">
+                  <td colSpan={5} className={tableStyles}>
+                    <ul className="list-disc pl-5 list-none text-xs">
                       {entry.mistakes.map((mistake, mistakeIndex) => (
                         <li key={mistakeIndex}>
-                          {mistake.pytanie} -   
-                          <strong> {mistake.odpowiedz}</strong> 
+                          <strong> {mistake.odpowiedz} -   
+                          </strong> {mistake.pytanie}
                         </li>
                       ))}
                     </ul>
                   </td>
                 </tr>
-              )} */}
+              )} 
             </React.Fragment>
           ))}
         </tbody>

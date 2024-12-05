@@ -63,7 +63,7 @@ const Stopper: React.FC<StopperProps> = ({ status, onCheckAnswer, initialCounter
   return (
     <div className="w-full m-0 p-0" >
       <div
-        className="bg-emerald-700 h-1"
+        className="bg-gray-500 h-1"
         style={{
           width: `${(!isCounting) ? 100 : 0}%`, // Dynamically calculate width based on initialCounter
           

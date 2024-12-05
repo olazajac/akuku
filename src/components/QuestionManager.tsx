@@ -36,6 +36,8 @@ interface NewEntry {
   mistakes: {
     pytanie: string; // The question text
     odpowiedz: string; // The correct answer
+    test_type: string;
+    hint: number;
   }[]; // An array of mistakes
 }
 
@@ -60,6 +62,7 @@ const QuestionManager: React.FC<{
   const [doubleChecked, setDoubleChecked] = useState<number>(0);
 
   const {  time, startTimer, stopTimer, minutes, seconds } = useTimer();
+  const [hintCount, setHintCount] = useState<number>(0);
 
 
 
@@ -97,7 +100,11 @@ const QuestionManager: React.FC<{
             handleCheckAnswer(true); 
 
           } else { 
-            setDoubleChecked(1)}
+            setDoubleChecked(1)
+            if (currentQuestion) {
+            speakAnswer(currentQuestion?.odpowiedz)
+            }
+          }
           
           
                  
@@ -113,6 +120,7 @@ const QuestionManager: React.FC<{
       if (event.ctrlKey && event.key.toLowerCase() === "q") {
 
         setShowHint(true)
+        setHintCount(prevCount => prevCount + 1)
 
         setInterval(() => {
           setShowHint(false);
@@ -279,7 +287,7 @@ const QuestionManager: React.FC<{
   const correctStuff = () => {
 
     if (currentQuestion) {
-    speakAnswer(currentQuestion.odpowiedz);
+    // speakAnswer(currentQuestion.odpowiedz);
     setStatus("correct");
 
     // Move the question to guessed state
@@ -496,7 +504,10 @@ const handleTestCompletion = () => {
     mistakes: getFilteredErrorQuestions().map((question) => ({
       pytanie: question.pytanie,
       odpowiedz: question.odpowiedz,
+      
     })),
+    test_type: mode,
+      hint: hintCount,
   };
 
   console.log("Test completion data:", results); // Debugging log
@@ -564,15 +575,15 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
         onSwipeLeft={handleLeftSwipe} // Optional, only if you need left swipe handling
       />
 
-<div className="bg-emerald-700 text-white w-full p-4 flex flex-col justify-around content-center items-center  ">
-
+<div className="topbar bg-gray-300 text-white w-full p-4 flex flex-col justify-around content-center items-center  ">
+<a href="../">
 <Image
         src="/images/logo.svg" // Path relative to the `public` folder
         alt="Description of image"
         width={50} // Specify width
         height={50} // Specify height
         className="justify-self-start mr-auto"
-      />
+      /></a>
 
 <Progress
         isRepeatChecked={isRepeatChecked}
@@ -633,6 +644,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
           doubleChecked={doubleChecked}
           setDoubleChecked={setDoubleChecked}
           answear={currentQuestion.odpowiedz}
+          speakAnswer={speakAnswer}
         />
       )}
 
@@ -645,7 +657,8 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
           guessedCount={getFilteredGuessedQuestions().length}
           incorrectCount={getTotalErrorCount()}
           totalQuestions={allQuestions.length}
-          totalTime={time} // Pass the total time taken to FinalScore
+          minutes={minutes} // Pass the total time taken to FinalScore
+          seconds={seconds}
         />
       )}
 

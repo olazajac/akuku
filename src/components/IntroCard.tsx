@@ -18,7 +18,7 @@ const IntroCard: React.FC<IntroCardProps> = ({
 
 }) => {
   return (
-    <div className=" max-w-full flex flex-col items-center pt-5 pb-5 text-white">
+    <div className=" max-w-full flex flex-col items-center pt-5 pb-5 text-gray-900">
        <h2 className="text-6xl p-3">{totalQuestions}</h2>
        <h1 className="text-xl p-2 mb-5">Unit 3</h1>
      
@@ -35,10 +35,9 @@ const IntroCard: React.FC<IntroCardProps> = ({
         }}
       />
 
-
       <Button
         text="Learn"
-        backgroundColor="bg-amber-400 hover:bg-emerald-900 p-8 w-full"
+        backgroundColor="bg-green-700 hover:bg-green-900 p-8 w-full"
         textColor="text-white"
         textSize="text-xl"
         onClick={() => {

@@ -14,7 +14,7 @@ const Settings: React.FC<SettingsProps> = ({
   };
 
   return (
-    <div className="flex items-center mt-4">
+    <div className="flex items-center m-auto mt-4">
       <label className="mr-2">Repeat Errors</label>
       <input
         type="checkbox"
