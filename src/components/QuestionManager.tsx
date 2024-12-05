@@ -36,9 +36,10 @@ interface NewEntry {
   mistakes: {
     pytanie: string; // The question text
     odpowiedz: string; // The correct answer
-    test_type: string;
-    hint: number;
+    
   }[]; // An array of mistakes
+  test_type: string;
+    hint: number;
 }
 
 
