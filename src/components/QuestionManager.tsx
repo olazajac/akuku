@@ -56,6 +56,8 @@ const QuestionManager: React.FC<{
 
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isRepeatChecked, setIsRepeatChecked] = useState<boolean>(false);
+
+  const [random, setRandom] = useState<boolean>(false);
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
 
   const [prevquestion, setPrevquestion] =   useState<string | null>(null);
@@ -231,7 +233,7 @@ const QuestionManager: React.FC<{
 
   useEffect(() => {
     // Initialize questions
-    const initializedQuestions = questions.map((q, index) => ({
+    let initializedQuestions = questions.map((q, index) => ({
       pytanie: q.pytanie,
       odpowiedz: q.odpowiedz,
       hot: 0, // Changed from active to hot
@@ -240,12 +242,33 @@ const QuestionManager: React.FC<{
       index: index,
     }));
 
+  // If random is true, keep only 20 random questions (or all if less than 20)
+  if (random) {
+    if (initializedQuestions.length > 20) {
+      const shuffledForRandom = shuffleArray(initializedQuestions);
+      initializedQuestions = shuffledForRandom.slice(0, 20);
+
+      console.log('whats going on');
+      
+    }
+  }
+
+
+  console.log(initializedQuestions);
+      
     setAllQuestions(initializedQuestions);
 
 
     // Shuffle questions
     const shuffled = shuffleArray(initializedQuestions);
+
+
+    
+
+
     setShuffledQuestions(shuffled);
+
+    
 
     // Set the first 4 questions as hot
     const initialHotQuestions = shuffled.slice(0, 4);
@@ -261,7 +284,7 @@ const QuestionManager: React.FC<{
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  }, [questions]);
+  }, [questions, random]);
 
 
 
@@ -671,7 +694,15 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
       <>
       <Settings
           isRepeatChecked={isRepeatChecked}
-          setIsRepeatChecked={setIsRepeatChecked} />
+          setIsRepeatChecked={setIsRepeatChecked} 
+
+          random={random}
+          setRandom={setRandom} 
+          
+          
+          
+          
+          />
       <ScoreTable testId={testId.toString()} onRedoMistakes={handleRedoMistakes} />
           </>
       }
