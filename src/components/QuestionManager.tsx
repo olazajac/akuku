@@ -244,9 +244,9 @@ const QuestionManager: React.FC<{
 
   // If random is true, keep only 20 random questions (or all if less than 20)
   if (random) {
-    if (initializedQuestions.length > 20) {
+    if (initializedQuestions.length > 10) {
       const shuffledForRandom = shuffleArray(initializedQuestions);
-      initializedQuestions = shuffledForRandom.slice(0, 20);
+      initializedQuestions = shuffledForRandom.slice(0, 10);
 
       console.log('whats going on');
       
