@@ -45,8 +45,8 @@ interface NewEntry {
 
 const QuestionManager: React.FC<{
   questions: { pytanie: string; odpowiedz: string }[];
-  testId: number;
-}> = ({ questions,testId }) => {
+  testId: number; testName: string;
+}> = ({ questions,testId, testName }) => {
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
 
@@ -601,6 +601,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
     <>
       {/* Timer Component */}
       
+      
       <SwipeListener
         onSwipeRight={handleRightSwipe}
         onSwipeLeft={handleLeftSwipe} // Optional, only if you need left swipe handling
@@ -642,6 +643,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
           setStatus={handleStatusChange} // Updated this line
           startTimer={startTimer} // Use timer's start method
           totalQuestions={allQuestions.length}
+          testName={testName}
         />
       )}
 

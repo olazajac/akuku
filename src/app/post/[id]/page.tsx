@@ -40,6 +40,8 @@ const SinglePost = () => {
 
       <QuestionManager
   questions={post.acf.test}
+  testName={post.title.rendered}
+ 
   testId={testId}
 
 />
