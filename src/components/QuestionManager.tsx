@@ -435,6 +435,13 @@ const QuestionManager: React.FC<{
     return shuffledQuestions.filter((q) => q.guessed === 1);
   };
 
+
+  const getFilteredPerfectQuestions = () => {
+    return shuffledQuestions.filter((q) => q.guessed === 1 && q.errors === 0);
+  };
+
+ 
+
   const getFilteredHotQuestions = () => {
     return shuffledQuestions.filter((q) => q.hot === 1);
   };

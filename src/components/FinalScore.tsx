@@ -6,6 +6,7 @@ interface FinalScoreProps {
   incorrectCount: number;
   minutes: number;
   seconds: number;
+  perfectCount: number;
 }
 
 const FinalScore: React.FC<FinalScoreProps> = ({
@@ -14,6 +15,7 @@ const FinalScore: React.FC<FinalScoreProps> = ({
   incorrectCount,
   minutes,
   seconds,
+  perfectCount
 }) => {
   return (
     <div className="flex flex-col  gap-[30px] items-center mt-[170px]">
@@ -27,6 +29,9 @@ const FinalScore: React.FC<FinalScoreProps> = ({
 
         <p className="text-xl">
         Total unique questions: {totalQuestions}</p>
+
+        <p className="text-xl">
+        Total questions answeared at first try: {perfectCount} </p>
 
         <p className="text-xl">
         
