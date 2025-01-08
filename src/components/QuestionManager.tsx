@@ -690,6 +690,7 @@ const handleRedoMistakes = (mistakes: { pytanie: string; odpowiedz: string }[], 
           totalQuestions={allQuestions.length}
           minutes={minutes} // Pass the total time taken to FinalScore
           seconds={seconds}
+          perfectCount={getFilteredPerfectQuestions().length}
         />
       )}
 
