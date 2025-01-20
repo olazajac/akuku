@@ -41,7 +41,7 @@ const ErrorCard: React.FC<ErrorCardProps> = ({
         } }
       >
 
-<h2 className="text-2xl text-pink-300 font-bold my-10 text-center">  <strong>{prevquestion}</strong></h2>
+<h2 className="text-[30px] md:text-[20px] text-pink-300 font-bold my-10 text-center">  <strong>{prevquestion}</strong></h2>
         
        
         <p className="mt-2 text-sm text-center">

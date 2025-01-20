@@ -51,7 +51,7 @@ const CorrectCard: React.FC<CorrectCardProps> = ({
 
 
 
-      <h2 className="text-[50px] text-emerald-800 font-bold my-10 text-center">{prevquestion}</h2>
+      <h2 className="text-[30px] md:text-[20px] text-emerald-800 font-bold my-10 text-center">{prevquestion}</h2>
 
 
 <Player
