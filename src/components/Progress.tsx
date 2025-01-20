@@ -35,7 +35,7 @@ const Progress: React.FC<ProgressProps> = ({
         <p className="text-sm "> {questionsLeft} / {totalQuestions}</p>
 
         <div className="timer">
-        <p className="text-xs w-[100px] text-center bg-gray-100 rounded-lg px-2 py-1" > {minutes}:{seconds}</p>
+        <p className="text-xs w-[100px] text-center  rounded-lg px-2 py-1" > {minutes}:{seconds}</p>
       </div>
 
       <div>  <p className="text-sm ">{guessedCount} - <span>{incorrectCount}</span></p>
