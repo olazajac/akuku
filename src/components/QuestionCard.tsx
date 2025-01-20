@@ -39,7 +39,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   }, [status, inputRef, setUserAnswer]);
 
   return (
-    <div className="bg-yellow-500 p-4 w-full  flex flex-col items-center  ">
+    <div className=" p-4 w-full  flex flex-col items-center  ">
 
       <div className="h-[40vh] flex flex-col items-center content-center justify-center"> 
       <h3 className="text-[30px] md:text-[20px]  text-gray-900 font-bold text-center ">{question}  </h3>
