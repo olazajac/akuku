@@ -40,8 +40,11 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
 
   return (
     <div className="p-4 w-full  flex flex-col items-center content-center flex-grow ">
-      <h2 className="text-[50px] text-gray-900 font-bold my-10 text-center mt-[15vh] mb-[15vh]">{question}  {doubleChecked ? ' - ' + answear : ''}</h2>
 
+      <div className="h-[40vh] flex flex-col items-center content-center justify-center"> 
+      <h3 className="text-[50px] text-gray-900 font-bold text-center ">{question}  </h3>
+      <h3 className="text-[50px] text-green-900 ">{doubleChecked ?  answear : '   '}</h3>
+      </div>
 
       {mode === "test" && (
         <>
@@ -127,6 +130,8 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
       
         
       )}
+
+
     </div>
   );
 };
